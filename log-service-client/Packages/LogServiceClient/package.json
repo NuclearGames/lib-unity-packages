@@ -1,0 +1,11 @@
+{
+  "name": "com.nucleargames.logserviceclient",
+  "displayName": "Log Service Client",
+  "author": {
+    "name": "NuclearGames"
+  },
+  "version": "1.0.0",
+  "unity": "2020.3",
+  "description": "Client utils for Log Service",
+  "type": "library"
+}
