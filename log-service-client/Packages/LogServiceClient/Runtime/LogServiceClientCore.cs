@@ -10,7 +10,7 @@ using LogServiceClient.Runtime.WebRequests.Utils;
 using System;
 
 namespace LogServiceClient.Runtime {
-    public sealed class LogServiceClient : IDisposable {
+    public sealed class LogServiceClientCore : IDisposable {
         private readonly LogServiceClientOptions _options;
         private readonly LogServiceRequester _requester;
         private readonly LogPool<ReceiveLogEntry> _receivePool;
@@ -25,7 +25,7 @@ namespace LogServiceClient.Runtime {
         private readonly LogRequestMachineContext _context;
         private readonly LogRequestMachine _requestMachine;
 
-        public LogServiceClient(LogServiceClientOptions options) {
+        public LogServiceClientCore(LogServiceClientOptions options) {
             _options = options;
 
             _receiveLogEntryToSendLogEntryMapper = new ReceiveLogEntryToSendLogEntryMapper();
@@ -33,8 +33,8 @@ namespace LogServiceClient.Runtime {
             _logServiceClientDeviceOptionsToLogDeviceInfoEntityMapper = new LogServiceClientDeviceOptionsToLogDeviceInfoEntityMapper();
 
             _receivePool = new LogPool<ReceiveLogEntry>(_options.ReceiveBufferPoolCapacity);
-            _sendPool = new LogPool<SendLogEntry>(-1);
-            _logEventEntityPool = new LogPool<LogEventEntity>(-1);
+            _sendPool = new LogPool<SendLogEntry>(_options.SendBufferPoolCapacity);
+            _logEventEntityPool = new LogPool<LogEventEntity>(_options.EventEntityPoolCapacity);
 
             _requester = new LogServiceRequester(_options, _logServiceClientDeviceOptionsToLogDeviceInfoEntityMapper);
 

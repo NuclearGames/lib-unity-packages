@@ -29,6 +29,16 @@
         /// Размера пула хранимых логов.
         /// </summary>
         public int ReceiveBufferPoolCapacity { get; set; }
+
+        /// <summary>
+        /// Размера пула отправляемых логов.
+        /// </summary>
+        public int SendBufferPoolCapacity { get; set; }
+
+        /// <summary>
+        /// Размера пула отправляемых сущностей.
+        /// </summary>
+        public int EventEntityPoolCapacity { get; set; }
     }
 
     public sealed class LogServiceClientDeviceOptions {
