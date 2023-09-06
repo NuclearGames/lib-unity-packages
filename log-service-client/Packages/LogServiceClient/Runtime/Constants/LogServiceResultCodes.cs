@@ -1,5 +1,37 @@
 ﻿namespace LogServiceClient.Runtime.Constants {
     public static class LogServiceResultCodes {
+        public static class PutDevice {
+            public static class Ok {
+                public const int HTTP_CODE = 200;
+                public static bool Check(long httpCode, string errorCode) {
+                    return httpCode == HTTP_CODE;
+                }
+            }
+
+            public static class Created {
+                public const int HTTP_CODE = 201;
+                public static bool Check(long httpCode, string errorCode) {
+                    return httpCode == HTTP_CODE;
+                }
+            }
+
+            public static class NotFound {
+                public const int HTTP_CODE = 404;
+                public const string DB_NOT_FOUND = "DbNotFound";
+                public static bool Check(long httpCode, string errorCode) {
+                    return httpCode == HTTP_CODE
+                        && (errorCode == DB_NOT_FOUND);
+                }
+            }
+
+            public static class Internal {
+                public const int HTTP_CODE = 500;
+                public static bool Check(long httpCode, string errorCode) {
+                    return httpCode == HTTP_CODE;
+                }
+            }
+        }
+
         public static class GetSession {
             public static class Created {
                 public const int HTTP_CODE = 201;

@@ -5,7 +5,7 @@ using System;
 using UnityEngine;
 
 namespace LogServiceClient.Runtime {
-    internal class LogMessageReceiveHandler : IDisposable {
+    public sealed class LogMessageReceiveHandler : IDisposable {
         private readonly IReceiveLogBuffer _receiveBuffer;
         private readonly ISendLogBuffer _sendBuffer;
         private readonly ILogMapper<ReceiveLogEntry, SendLogEntry> _mapper;

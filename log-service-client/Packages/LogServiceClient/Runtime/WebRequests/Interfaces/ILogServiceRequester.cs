@@ -8,5 +8,6 @@ namespace LogServiceClient.Runtime.WebRequests.Interfaces {
         UniTask<LogServiceGetSessionResult> GetSession(CancellationToken cancellation);
         UniTask<LogServiceGetReportResult> GetReport(string sessionId, CancellationToken cancellation);
         UniTask<LogServiceRequestResult> PostEvents(string reportId, List<LogEventEntity> entities, CancellationToken cancellation);
+        UniTask<LogServiceRequestResult> PutDevice(CancellationToken cancellation);
     }
 }

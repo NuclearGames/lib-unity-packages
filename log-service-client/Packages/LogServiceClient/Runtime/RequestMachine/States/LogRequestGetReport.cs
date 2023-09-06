@@ -7,10 +7,10 @@ using System.Threading;
 
 namespace LogServiceClient.Runtime.RequestMachine.States {
     public sealed class LogRequestGetReport : LogRequestBaseState {
+        protected override LogRequestStateIndex Index => LogRequestStateIndex.GetReport;
+
         public LogRequestGetReport(ILogRequestMachineInternal machine) : base(machine) {
         }
-
-        protected override LogRequestStateIndex Index => LogRequestStateIndex.GetReport;
 
         public async override UniTask<LogRequestStateResult> ExecuteAsync(CancellationToken cancellation) {
             var result = await Machine.Context.Requester.GetReport(Machine.Variables.SessionId, cancellation);

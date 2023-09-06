@@ -3,6 +3,7 @@
         public string ServiceAddress { get; set; }
         public string DbId { get; set; }
         public string DeviceId { get; set; }
+        public LogServiceClientDeviceOptions DeviceOptions { get; set; }
 
         /// <summary>
         /// Максимальное число логов, которое может быть отправлено за один запрос.
@@ -28,5 +29,13 @@
         /// Размера пула хранимых логов.
         /// </summary>
         public int ReceiveBufferPoolCapacity { get; set; }
+    }
+
+    public sealed class LogServiceClientDeviceOptions {
+        public string Model { get; set; }
+        public string Name { get; set; }
+        public string OperatingSystem { get; set; }
+        public string OperatingSystemFamily { get; set; }
+        public string ProcessorType { get; set; }
     }
 }

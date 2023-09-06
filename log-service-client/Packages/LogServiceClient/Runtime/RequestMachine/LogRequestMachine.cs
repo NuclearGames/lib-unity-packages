@@ -7,10 +7,12 @@ using System.Threading;
 namespace LogServiceClient.Runtime.RequestMachine {
     public sealed class LogRequestMachine : ILogRequestMachineInternal {
         public ILogRequestMachineContext Context { get; }
+        public bool IsRunning { get; private set; }
         public LogRequestStateIndex StateIndex { get; private set; } = LogRequestStateIndex.None;
 
         public LogServiceClientOptions Options { get; }
         public LogRequestMachineVariables Variables { get; }
+
 
         private readonly ILogRequestState[] _states;
 
@@ -26,6 +28,9 @@ namespace LogServiceClient.Runtime.RequestMachine {
         }
 
         public async UniTask Run(CancellationToken cancellation = default) {
+            IsRunning = true;
+            Thread.MemoryBarrier();
+
             StateIndex = string.IsNullOrEmpty(Variables.SessionId)
                 ? LogRequestStateIndex.GetSession
                 : LogRequestStateIndex.GetReport;
@@ -34,6 +39,9 @@ namespace LogServiceClient.Runtime.RequestMachine {
                 var result = await GetCurrentState().ExecuteAsync(cancellation);
                 StateIndex = result.Index;
             }
+
+            Thread.MemoryBarrier();
+            IsRunning = false;
         }
 
         private ILogRequestState GetCurrentState() {

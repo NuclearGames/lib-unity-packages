@@ -1,4 +1,5 @@
-﻿using LogServiceClient.Runtime.Caches;
+﻿using Cysharp.Threading.Tasks;
+using LogServiceClient.Runtime.Caches;
 using LogServiceClient.Runtime.Caches.Utils;
 using LogServiceClient.Runtime.Mappers;
 using LogServiceClient.Runtime.Pools;
@@ -19,6 +20,7 @@ namespace LogServiceClient.Runtime {
         private readonly SendLogBuffer _sendBuffer;
         private readonly ReceiveLogEntryToSendLogEntryMapper _receiveLogEntryToSendLogEntryMapper;
         private readonly SendLogEntryToLogEventEntityMapper _sendLogEntryToLogEventEntityMapper;
+        private readonly LogServiceClientDeviceOptionsToLogDeviceInfoEntityMapper _logServiceClientDeviceOptionsToLogDeviceInfoEntityMapper;
         private readonly LogMessageReceiveHandler _logMessageReceiveHandler;
         private readonly LogRequestMachineContext _context;
         private readonly LogRequestMachine _requestMachine;
@@ -26,17 +28,18 @@ namespace LogServiceClient.Runtime {
         public LogServiceClient(LogServiceClientOptions options) {
             _options = options;
 
-            _requester = new LogServiceRequester(options);
+            _receiveLogEntryToSendLogEntryMapper = new ReceiveLogEntryToSendLogEntryMapper();
+            _sendLogEntryToLogEventEntityMapper = new SendLogEntryToLogEventEntityMapper();
+            _logServiceClientDeviceOptionsToLogDeviceInfoEntityMapper = new LogServiceClientDeviceOptionsToLogDeviceInfoEntityMapper();
 
-            _receivePool = new LogPool<ReceiveLogEntry>(options.ReceiveBufferPoolCapacity);
+            _receivePool = new LogPool<ReceiveLogEntry>(_options.ReceiveBufferPoolCapacity);
             _sendPool = new LogPool<SendLogEntry>(-1);
             _logEventEntityPool = new LogPool<LogEventEntity>(-1);
 
-            _receiveBuffer = new ReceiveLogBuffer(_receivePool, options.ReceiveBufferCapacity);
-            _sendBuffer = new SendLogBuffer(_sendPool);
+            _requester = new LogServiceRequester(_options, _logServiceClientDeviceOptionsToLogDeviceInfoEntityMapper);
 
-            _receiveLogEntryToSendLogEntryMapper = new ReceiveLogEntryToSendLogEntryMapper();
-            _sendLogEntryToLogEventEntityMapper = new SendLogEntryToLogEventEntityMapper();
+            _receiveBuffer = new ReceiveLogBuffer(_receivePool, _options.ReceiveBufferCapacity);
+            _sendBuffer = new SendLogBuffer(_sendPool);
 
             _logMessageReceiveHandler = new LogMessageReceiveHandler(_receiveBuffer, _sendBuffer,
                 _receiveLogEntryToSendLogEntryMapper);
@@ -48,10 +51,24 @@ namespace LogServiceClient.Runtime {
                 _logEventEntityPool);
 
             _requestMachine = new LogRequestMachine(_context, new LogRequestStateFactory());
+
+            _sendBuffer.onLogsAdded += OnSendBufferLogsAdded;
         }
 
         public void Dispose() {
+            _sendBuffer.onLogsAdded -= OnSendBufferLogsAdded;
+
             _logMessageReceiveHandler.Dispose();
+        }
+
+        public void TryRun() {
+            if(!_requestMachine.IsRunning && _sendBuffer.Count > 0) {
+                _requestMachine.Run().Forget();
+            }
+        }
+
+        private void OnSendBufferLogsAdded() {
+            TryRun();
         }
     }
 }

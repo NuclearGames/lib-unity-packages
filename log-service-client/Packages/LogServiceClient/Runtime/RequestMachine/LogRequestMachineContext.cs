@@ -28,7 +28,7 @@ namespace LogServiceClient.Runtime.RequestMachine {
         }
 
         public UniTask Delay(int ms, CancellationToken cancellation) {
-            throw new System.NotImplementedException();
+            return UniTask.Delay(ms, cancellationToken: cancellation);
         }
     }
 }

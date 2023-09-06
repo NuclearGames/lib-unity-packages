@@ -1,4 +1,5 @@
 ﻿using Cysharp.Threading.Tasks;
+using LogServiceClient.Runtime.Mappers.Interfaces;
 using LogServiceClient.Runtime.WebRequests.Interfaces;
 using LogServiceClient.Runtime.WebRequests.Utils;
 using Newtonsoft.Json;
@@ -11,9 +12,29 @@ using UnityEngine.Networking;
 namespace LogServiceClient.Runtime.WebRequests {
     public sealed class LogServiceRequester : ILogServiceRequester {
         private readonly LogServiceClientOptions _options;
+        private readonly ILogMapper<LogServiceClientDeviceOptions, LogDeviceInfoEntity> _mapper;
+        private LogDeviceInfoEntity _deviceInfoEntity;
 
-        public LogServiceRequester(LogServiceClientOptions options) {
+        public LogServiceRequester(
+            LogServiceClientOptions options, 
+            ILogMapper<LogServiceClientDeviceOptions, LogDeviceInfoEntity> mapper) {
+
             _options = options;
+            _mapper = mapper;
+        }
+
+        public async UniTask<LogServiceRequestResult> PutDevice(CancellationToken cancellation) {
+            _deviceInfoEntity ??= new LogDeviceInfoEntity();
+            _mapper.Copy(_options.DeviceOptions, _deviceInfoEntity);
+
+            string dataJson = JsonConvert.SerializeObject(_deviceInfoEntity);
+
+            UnityWebRequest www = UnityWebRequest.Put($"{_options.ServiceAddress}/db{_options.DbId}/device_id/{_options.DeviceId}", 
+                dataJson);
+
+            var (result, _) = await PerformRequest(www, cancellation);
+
+            return result;
         }
 
         public async UniTask<LogServiceGetSessionResult> GetSession(CancellationToken cancellation) {

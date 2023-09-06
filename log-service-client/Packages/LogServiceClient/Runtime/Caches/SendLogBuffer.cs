@@ -2,9 +2,12 @@
 using LogServiceClient.Runtime.Caches.Utils;
 using LogServiceClient.Runtime.Mappers.Interfaces;
 using LogServiceClient.Runtime.Pools.Interfaces;
+using System;
 
 namespace LogServiceClient.Runtime.Caches {
     public sealed class SendLogBuffer : BaseLogBuffer<SendLogEntry>, ISendLogBuffer {
+        public event Action onLogsAdded;
+
         public SendLogBuffer(ILogPool<SendLogEntry> pool) : base(pool) {
         }
 
@@ -18,6 +21,8 @@ namespace LogServiceClient.Runtime.Caches {
 
                 AddLast(entry);
             }
+
+            onLogsAdded?.Invoke();
         }
     }
 }
