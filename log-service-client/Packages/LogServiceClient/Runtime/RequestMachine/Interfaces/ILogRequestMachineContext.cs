@@ -1,15 +1,16 @@
 ﻿using Cysharp.Threading.Tasks;
 using LogServiceClient.Runtime.Caches.Interfaces;
+using LogServiceClient.Runtime.Caches.Utils;
 using LogServiceClient.Runtime.Mappers.Interfaces;
 using LogServiceClient.Runtime.WebRequests.Interfaces;
 using LogServiceClient.Runtime.WebRequests.Utils;
 using System.Threading;
 
 namespace LogServiceClient.Runtime.RequestMachine.Interfaces {
-    public interface ILogRequestContext {
+    public interface ILogRequestMachineContext {
         ILogServiceRequester Requester { get; }
-        ILogBuffer SendBuffer { get; }
-        ILogMapper<LogEntry, LogEventEntity> LogEntryToLogEventEntityMapper { get; }
+        ISendLogBuffer SendBuffer { get; }
+        ILogMapper<SendLogEntry, LogEventEntity> SendLogEntryToLogEventEntityMapper { get; }
 
         UniTask Delay(int ms, CancellationToken cancellation);
     }

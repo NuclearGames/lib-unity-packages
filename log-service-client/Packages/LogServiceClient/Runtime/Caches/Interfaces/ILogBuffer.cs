@@ -1,7 +1,8 @@
-﻿using LogServiceClient.Runtime.Mappers.Interfaces;
+﻿using LogServiceClient.Runtime.Caches.Utils;
+using LogServiceClient.Runtime.Mappers.Interfaces;
 
 namespace LogServiceClient.Runtime.Caches.Interfaces {
-    public interface ILogBuffer {
+    public interface ILogBuffer<T> where T : BaseLogEntry<T> {
         /// <summary>
         /// Число элементов в буфере.
         /// </summary>
@@ -11,6 +12,6 @@ namespace LogServiceClient.Runtime.Caches.Interfaces {
         /// Перемещает данные первого элемента в указанный объект используя маппер.
         /// Исходный объект удаляется из буфера.
         /// </summary>
-        void MoveFirst<T>(T target, ILogMapper<LogEntry, T> mapper);
+        void MoveFirst<TTarget>(TTarget target, ILogMapper<T, TTarget> mapper);
     }
 }

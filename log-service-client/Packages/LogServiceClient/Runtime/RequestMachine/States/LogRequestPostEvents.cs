@@ -53,7 +53,7 @@ namespace LogServiceClient.Runtime.RequestMachine.States {
             // TODO: пул и заполнение Index. Index мб стоит хранить еще в sendBuffer.
             while (sendBuffer.Count > 0 && _events.Count < Machine.Options.MaxLogsPerRequest) {
                 var entity = new LogEventEntity();
-                sendBuffer.MoveFirst(entity, Machine.Context.LogEntryToLogEventEntityMapper);
+                sendBuffer.MoveFirst(entity, Machine.Context.SendLogEntryToLogEventEntityMapper);
                 _events.Add(entity);
             }
         }

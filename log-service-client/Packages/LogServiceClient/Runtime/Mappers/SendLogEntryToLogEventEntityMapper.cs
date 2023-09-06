@@ -4,8 +4,9 @@ using LogServiceClient.Runtime.WebRequests.Utils;
 using UnityEngine;
 
 namespace LogServiceClient.Runtime.Mappers {
-    public class LogEntryToLogEventEntityMapper : ILogMapper<LogEntry, LogEventEntity> {
-        public void Copy(LogEntry from, LogEventEntity to) {
+    public class SendLogEntryToLogEventEntityMapper : ILogMapper<SendLogEntry, LogEventEntity> {
+        public void Copy(SendLogEntry from, LogEventEntity to) {
+            to.Index = from.Index;
             to.Message = from.Condition;
             to.StackTrace = from.StackTrace;
             to.Type = MapType(from.Type);

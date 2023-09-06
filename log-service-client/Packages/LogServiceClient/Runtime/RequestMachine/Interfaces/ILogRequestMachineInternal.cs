@@ -2,7 +2,7 @@
 
 namespace LogServiceClient.Runtime.RequestMachine.Interfaces {
     public interface ILogRequestMachineInternal {
-        public ILogRequestContext Context { get; }
+        public ILogRequestMachineContext Context { get; }
         LogServiceClientOptions Options { get; }
         LogRequestMachineVariables Variables { get; }
     }

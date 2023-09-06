@@ -6,16 +6,17 @@ using System.Threading;
 
 namespace LogServiceClient.Runtime.RequestMachine {
     public sealed class LogRequestMachine : ILogRequestMachineInternal {
-        public ILogRequestContext Context { get; }
+        public ILogRequestMachineContext Context { get; }
         public LogRequestStateIndex StateIndex { get; private set; } = LogRequestStateIndex.None;
-       // public LogRequestMachineStatus Status { get; private set; } = LogRequestMachineStatus.MoveNext;
 
         public LogServiceClientOptions Options { get; }
         public LogRequestMachineVariables Variables { get; }
 
         private readonly ILogRequestState[] _states;
 
-        public LogRequestMachine(ILogRequestStateFactory stateFactory) {
+        public LogRequestMachine(ILogRequestMachineContext context, ILogRequestStateFactory stateFactory) {
+            Context = context;
+
             _states = new ILogRequestState[] { 
                 stateFactory.Create(LogRequestStateIndex.PutDevice),
                 stateFactory.Create(LogRequestStateIndex.GetSession),

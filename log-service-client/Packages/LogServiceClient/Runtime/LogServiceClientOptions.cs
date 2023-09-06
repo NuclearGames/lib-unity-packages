@@ -17,5 +17,15 @@
         /// Задержка между повторными попытками запроса.
         /// </summary>
         public int RequestRetryDelayMs { get; set; }
+
+        /// <summary>
+        /// Хранимое число логов. Старые логи вытесняются новыми, когда достигнута максимальная вместимость.
+        /// </summary>
+        public int ReceiveBufferCapacity { get; set; }
+
+        /// <summary>
+        /// Размера пула хранимых логов.
+        /// </summary>
+        public int ReceiveBufferPoolCapacity { get; set; }
     }
 }
