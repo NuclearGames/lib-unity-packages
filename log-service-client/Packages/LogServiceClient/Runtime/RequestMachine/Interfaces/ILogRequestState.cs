@@ -5,5 +5,6 @@ using System.Threading;
 namespace LogServiceClient.Runtime.RequestMachine.Interfaces {
     public interface ILogRequestState {
         UniTask<LogRequestStateResult> ExecuteAsync(CancellationToken cancellation);
+        void Reset();
     }
 }

@@ -31,6 +31,10 @@ namespace LogServiceClient.Runtime.RequestMachine {
             IsRunning = true;
             Thread.MemoryBarrier();
 
+            foreach(var state in _states) {
+                state.Reset();
+            }
+
             StateIndex = string.IsNullOrEmpty(Variables.SessionId)
                 ? LogRequestStateIndex.GetSession
                 : LogRequestStateIndex.GetReport;

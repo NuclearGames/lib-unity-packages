@@ -53,6 +53,11 @@ namespace LogServiceClient.Runtime.RequestMachine.States {
             return Exit();
         }
 
+        public override void Reset() {
+            base.Reset();
+            ClearBuffer();
+        }
+
         private void FillBuffer() {
             var sendBuffer = Machine.Context.SendBuffer;
 

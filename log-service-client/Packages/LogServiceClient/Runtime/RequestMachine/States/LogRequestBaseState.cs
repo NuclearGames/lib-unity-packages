@@ -6,15 +6,19 @@ using System.Threading;
 
 namespace LogServiceClient.Runtime.RequestMachine.States {
     public abstract class LogRequestBaseState : ILogRequestState {
+        protected abstract LogRequestStateIndex Index { get; }
         protected ILogRequestMachineInternal Machine { get; }
         protected int AttemptIndex { get; private set; }
-        protected abstract LogRequestStateIndex Index { get; }
 
         protected LogRequestBaseState(ILogRequestMachineInternal machine) {
             Machine = machine;
         }
 
         public abstract UniTask<LogRequestStateResult> ExecuteAsync(CancellationToken cancellation);
+
+        public virtual void Reset() {
+            AttemptIndex = 0;
+        }
 
         protected async UniTask<LogRequestStateResult> Retry(CancellationToken cancellation) {
             if (AttemptIndex < Machine.Options.MaxRequestAttempts) {
