@@ -7,7 +7,7 @@ using LogServiceClient.Runtime.Pools.Interfaces;
 namespace LogServiceClient.Runtime {
     public abstract class BaseLogBuffer<T> : ILogBuffer<T> where T : BaseLogEntry<T> {
         public int Count { get; private set; }
-        protected T First { get; private set; }
+        public T First { get; private set; }
         protected T Last { get; private set; }
 
         private readonly ILogPool<T> _pool;
@@ -34,7 +34,9 @@ namespace LogServiceClient.Runtime {
             if (Count == 0) {
                 First = Last = entry;
             } else {
-                Last = Last.Next = entry;
+                Last.Next = entry;
+                Last = entry;
+            //    Last = Last.Next = entry;
             }
             Count++;
         }
@@ -45,7 +47,9 @@ namespace LogServiceClient.Runtime {
             }
 
             Count--;
+            var itemToRemove = First;
             First = First.Next;
+            _pool.Return(itemToRemove);
         }
     }
 }

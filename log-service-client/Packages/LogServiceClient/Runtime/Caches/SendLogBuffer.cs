@@ -17,7 +17,9 @@ namespace LogServiceClient.Runtime.Caches {
             while(source.Count > 0) {
                 var entry = GetFromPool();
                 source.MoveFirst(entry, mapper);
-                entry.Index = Last.Index + 1;
+                entry.Index = Last != null
+                    ? Last.Index + 1
+                    : 0;
 
                 AddLast(entry);
             }
