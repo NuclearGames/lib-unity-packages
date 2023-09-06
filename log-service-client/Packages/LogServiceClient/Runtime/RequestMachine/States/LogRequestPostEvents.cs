@@ -20,7 +20,7 @@ namespace LogServiceClient.Runtime.RequestMachine.States {
             FillBuffer();
 
             var result = await Machine.Context.Requester.PostEvents(
-                Machine.Options.DbId, Machine.Variables.ReportId,
+                Machine.Variables.ReportId,
                 _events, cancellation);
 
             if (!result.Succeed) {
@@ -35,27 +35,40 @@ namespace LogServiceClient.Runtime.RequestMachine.States {
                 if (result.ErrorCode == LogServiceResultCodes.PostEvents.NotFound.REPORT_NOT_FOUND) {
                     return MoveTo(LogRequestStateIndex.GetReport);
                 }
+
+                ClearBuffer();
                 return Exit();
             }
 
             if (LogServiceResultCodes.PostEvents.Created.Check(result.HttpCode, result.ErrorCode)) {
+
+                ClearBuffer();
+
                 return Machine.Context.SendBuffer.Count > 0
                     ? MoveTo(Index)
                     : Exit();
             }
 
+            ClearBuffer();
             return Exit();
         }
 
         private void FillBuffer() {
             var sendBuffer = Machine.Context.SendBuffer;
 
-            // TODO: пул и заполнение Index. Index мб стоит хранить еще в sendBuffer.
+            // TODO: пул.
             while (sendBuffer.Count > 0 && _events.Count < Machine.Options.MaxLogsPerRequest) {
-                var entity = new LogEventEntity();
+                var entity =  Machine.Context.LogEventEntityPool.Get();
                 sendBuffer.MoveFirst(entity, Machine.Context.SendLogEntryToLogEventEntityMapper);
                 _events.Add(entity);
             }
+        }
+
+        private void ClearBuffer() {
+            foreach(var item in _events) {
+                Machine.Context.LogEventEntityPool.Return(item);
+            }
+            _events.Clear();
         }
     }
 }

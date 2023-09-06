@@ -10,9 +10,9 @@ namespace LogServiceClient.Runtime {
         protected T First { get; private set; }
         protected T Last { get; private set; }
 
-        private readonly ILogEntryPool<T> _pool;
+        private readonly ILogPool<T> _pool;
 
-        public BaseLogBuffer(ILogEntryPool<T> pool) {
+        public BaseLogBuffer(ILogPool<T> pool) {
             _pool = pool;
         }
 

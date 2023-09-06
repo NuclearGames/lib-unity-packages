@@ -2,6 +2,7 @@
     public sealed class LogServiceClientOptions {
         public string ServiceAddress { get; set; }
         public string DbId { get; set; }
+        public string DeviceId { get; set; }
 
         /// <summary>
         /// Максимальное число логов, которое может быть отправлено за один запрос.

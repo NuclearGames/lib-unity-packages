@@ -5,14 +5,16 @@ using LogServiceClient.Runtime.Pools;
 using LogServiceClient.Runtime.RequestMachine;
 using LogServiceClient.Runtime.RequestMachine.Factories;
 using LogServiceClient.Runtime.WebRequests;
+using LogServiceClient.Runtime.WebRequests.Utils;
 using System;
 
 namespace LogServiceClient.Runtime {
     public sealed class LogServiceClient : IDisposable {
         private readonly LogServiceClientOptions _options;
         private readonly LogServiceRequester _requester;
-        private readonly LogEntryPool<ReceiveLogEntry> _receivePool;
-        private readonly LogEntryPool<SendLogEntry> _sendPool;
+        private readonly LogPool<ReceiveLogEntry> _receivePool;
+        private readonly LogPool<SendLogEntry> _sendPool;
+        private readonly LogPool<LogEventEntity> _logEventEntityPool;
         private readonly ReceiveLogBuffer _receiveBuffer;
         private readonly SendLogBuffer _sendBuffer;
         private readonly ReceiveLogEntryToSendLogEntryMapper _receiveLogEntryToSendLogEntryMapper;
@@ -26,8 +28,9 @@ namespace LogServiceClient.Runtime {
 
             _requester = new LogServiceRequester(options);
 
-            _receivePool = new LogEntryPool<ReceiveLogEntry>(options.ReceiveBufferPoolCapacity);
-            _sendPool = new LogEntryPool<SendLogEntry>(-1);
+            _receivePool = new LogPool<ReceiveLogEntry>(options.ReceiveBufferPoolCapacity);
+            _sendPool = new LogPool<SendLogEntry>(-1);
+            _logEventEntityPool = new LogPool<LogEventEntity>(-1);
 
             _receiveBuffer = new ReceiveLogBuffer(_receivePool, options.ReceiveBufferCapacity);
             _sendBuffer = new SendLogBuffer(_sendPool);
@@ -41,7 +44,8 @@ namespace LogServiceClient.Runtime {
             _context = new LogRequestMachineContext(
                 _requester,
                 _sendBuffer,
-                _sendLogEntryToLogEventEntityMapper);
+                _sendLogEntryToLogEventEntityMapper,
+                _logEventEntityPool);
 
             _requestMachine = new LogRequestMachine(_context, new LogRequestStateFactory());
         }

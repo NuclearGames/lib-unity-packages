@@ -5,7 +5,7 @@ using LogServiceClient.Runtime.Pools.Interfaces;
 
 namespace LogServiceClient.Runtime.Caches {
     public sealed class SendLogBuffer : BaseLogBuffer<SendLogEntry>, ISendLogBuffer {
-        public SendLogBuffer(ILogEntryPool<SendLogEntry> pool) : base(pool) {
+        public SendLogBuffer(ILogPool<SendLogEntry> pool) : base(pool) {
         }
 
         public void MoveAllFrom<TSource>(ILogBuffer<TSource> source, ILogMapper<TSource, SendLogEntry> mapper) 

@@ -6,7 +6,7 @@ namespace LogServiceClient.Runtime.Caches {
     public sealed class ReceiveLogBuffer : BaseLogBuffer<ReceiveLogEntry>, IReceiveLogBuffer {
         private readonly int _maxCount;
 
-        public ReceiveLogBuffer(ILogEntryPool<ReceiveLogEntry> pool, int maxCount) : base(pool) {
+        public ReceiveLogBuffer(ILogPool<ReceiveLogEntry> pool, int maxCount) : base(pool) {
             _maxCount = maxCount;
         }
 

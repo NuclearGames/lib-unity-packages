@@ -26,12 +26,12 @@ namespace LogServiceClient.Runtime.RequestMachine {
         }
 
         public async UniTask Run(CancellationToken cancellation = default) {
-            StateIndex = LogRequestStateIndex.GetSession;
-            // TODO: GetReport, если есть id сессии. GetSession, если нет.
+            StateIndex = string.IsNullOrEmpty(Variables.SessionId)
+                ? LogRequestStateIndex.GetSession
+                : LogRequestStateIndex.GetReport;
 
             while (StateIndex != LogRequestStateIndex.None) {
-                var currentState = GetCurrentState();
-                var result = await currentState.ExecuteAsync(cancellation);
+                var result = await GetCurrentState().ExecuteAsync(cancellation);
                 StateIndex = result.Index;
             }
         }
