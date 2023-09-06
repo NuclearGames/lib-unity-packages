@@ -27,8 +27,7 @@ namespace LogServiceClient.Runtime {
         }
 
         private void OnLogMessageReceived(string condition, string stackTrace, LogType type) {
-            // TODO: че по времени.
-            _receiveBuffer.StoreEntry(condition, stackTrace, type, DateTime.UtcNow.Ticks);
+            _receiveBuffer.StoreEntry(condition, stackTrace, type, DateTime.UtcNow);
 
             if (type == LogType.Exception || type == LogType.Error) {
                 _sendBuffer.MoveAllFrom(_receiveBuffer, _mapper);

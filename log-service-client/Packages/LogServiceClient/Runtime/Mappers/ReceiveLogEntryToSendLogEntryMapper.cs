@@ -7,7 +7,7 @@ namespace LogServiceClient.Runtime.Mappers {
             to.Condition = from.Condition;
             to.StackTrace = from.StackTrace;
             to.Type = from.Type;
-            to.Timestamp = from.Timestamp;
+            to.Time = from.Time;
         }
     }
 }

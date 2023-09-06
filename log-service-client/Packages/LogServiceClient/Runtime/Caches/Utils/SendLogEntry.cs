@@ -1,11 +1,12 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace LogServiceClient.Runtime.Caches.Utils {
     public sealed class SendLogEntry : BaseLogEntry<SendLogEntry> {
         public string Condition { get; set; }
         public string StackTrace { get; set; }
         public LogType Type { get; set; }
-        public long Timestamp { get; set; }
+        public DateTime Time { get; set; }
         public int Index { get; set; }
 
         public override void Reset() {
@@ -13,7 +14,7 @@ namespace LogServiceClient.Runtime.Caches.Utils {
             Condition = null;
             StackTrace = null;
             Type = default;
-            Timestamp = default;
+            Time = default;
             Index = default;
         }
     }

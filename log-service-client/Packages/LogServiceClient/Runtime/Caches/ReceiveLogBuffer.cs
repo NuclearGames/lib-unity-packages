@@ -1,5 +1,6 @@
 ﻿using LogServiceClient.Runtime.Caches.Interfaces;
 using LogServiceClient.Runtime.Pools.Interfaces;
+using System;
 using UnityEngine;
 
 namespace LogServiceClient.Runtime.Caches {
@@ -10,13 +11,13 @@ namespace LogServiceClient.Runtime.Caches {
             _maxCount = maxCount;
         }
 
-        public void StoreEntry(string condition, string stackTrace, LogType logType, long timestamp) {
+        public void StoreEntry(string condition, string stackTrace, LogType logType, DateTime time) {
             var entry = GetFromPool();
 
             entry.Condition = condition;
             entry.StackTrace = stackTrace;
             entry.Type = logType;
-            entry.Timestamp = timestamp;
+            entry.Time = time;
 
             AddLast(entry);
 

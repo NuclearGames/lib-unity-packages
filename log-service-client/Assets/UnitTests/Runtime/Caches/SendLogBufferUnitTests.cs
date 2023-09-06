@@ -93,7 +93,7 @@ namespace UnitTests.Runtime.Caches {
                 Mapper.Received().Copy(Arg.Is<ReceiveLogEntry>(
                     x => x.Condition == entry.Condition
                     && x.StackTrace == entry.StackTrace
-                    && x.Timestamp == entry.Timestamp
+                    && x.Time == entry.Time
                     && x.Type == entry.Type), Arg.Any<SendLogEntry>());
             }
         }

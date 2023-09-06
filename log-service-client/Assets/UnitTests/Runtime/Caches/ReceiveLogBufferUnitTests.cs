@@ -18,7 +18,7 @@ namespace UnitTests.Runtime.Caches {
                 Condition = "item",
                 StackTrace = "trace",
                 Type = LogType.Log,
-                Timestamp = 100
+                Time = default
             };
 
             // Act.
@@ -41,14 +41,14 @@ namespace UnitTests.Runtime.Caches {
                 Condition = "item_first",
                 StackTrace = "trace",
                 Type = LogType.Log,
-                Timestamp = 100
+                Time = default
             };
 
             var entry = new ReceiveLogEntry() {
                 Condition = "item",
                 StackTrace = "trace",
                 Type = LogType.Log,
-                Timestamp = 100
+                Time = default
             };
 
             // Act.
@@ -73,7 +73,7 @@ namespace UnitTests.Runtime.Caches {
                 Condition = "item",
                 StackTrace = "trace",
                 Type = LogType.Log,
-                Timestamp = 100
+                Time = default
             };
 
             // Act.
@@ -106,7 +106,7 @@ namespace UnitTests.Runtime.Caches {
         }
 
         internal void InvokeStoreEntry(ReceiveLogEntry entry) {
-            Unit.StoreEntry(entry.Condition, entry.StackTrace, entry.Type, entry.Timestamp);
+            Unit.StoreEntry(entry.Condition, entry.StackTrace, entry.Type, entry.Time);
         }
 
         internal void AssertReceiveLogEntrySelfMapperCopyInvoked(ReceiveLogEntry sourceValues, ReceiveLogEntry target) {
@@ -114,7 +114,7 @@ namespace UnitTests.Runtime.Caches {
                 x => x.Condition == sourceValues.Condition
                 && x.StackTrace == sourceValues.StackTrace
                 && x.Type == sourceValues.Type
-                && x.Timestamp == sourceValues.Timestamp), target);
+                && x.Time == sourceValues.Time), target);
         }
     }
 }

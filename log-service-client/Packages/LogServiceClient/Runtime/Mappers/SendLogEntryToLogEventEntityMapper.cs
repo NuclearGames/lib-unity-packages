@@ -10,7 +10,7 @@ namespace LogServiceClient.Runtime.Mappers {
             to.Message = from.Condition;
             to.StackTrace = from.StackTrace;
             to.Type = MapType(from.Type);
-            to.Time = from.Timestamp;
+            to.Time = from.Time;
         }
 
         private short MapType(LogType type) {
