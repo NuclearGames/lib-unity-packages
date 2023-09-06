@@ -4,6 +4,7 @@ using LogServiceClient.Runtime.WebRequests.Interfaces;
 using LogServiceClient.Runtime.WebRequests.Utils;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -13,6 +14,13 @@ namespace LogServiceClient.Runtime.WebRequests {
     public sealed class LogServiceRequester : ILogServiceRequester {
         private readonly LogServiceClientOptions _options;
         private readonly ILogMapper<LogServiceClientDeviceOptions, LogDeviceInfoEntity> _mapper;
+
+        private readonly JsonSerializerSettings _jsonSettings = new JsonSerializerSettings {
+            DateFormatHandling = DateFormatHandling.IsoDateFormat,
+            NullValueHandling = NullValueHandling.Ignore,
+            ContractResolver = new CamelCasePropertyNamesContractResolver()
+        };
+
         private LogDeviceInfoEntity _deviceInfoEntity;
 
         public LogServiceRequester(
@@ -27,7 +35,7 @@ namespace LogServiceClient.Runtime.WebRequests {
             _deviceInfoEntity ??= new LogDeviceInfoEntity();
             _mapper.Copy(_options.DeviceOptions, _deviceInfoEntity);
 
-            string dataJson = JsonConvert.SerializeObject(_deviceInfoEntity);
+            string dataJson = JsonConvert.SerializeObject(_deviceInfoEntity, _jsonSettings);
 
             UnityWebRequest www = UnityWebRequest.Put($"{_options.ServiceAddress}/db{_options.DbId}/device_id/{_options.DeviceId}", 
                 dataJson);
@@ -66,7 +74,7 @@ namespace LogServiceClient.Runtime.WebRequests {
         public async UniTask<LogServiceRequestResult> PostEvents(string reportId, List<LogEventEntity> entities, 
             CancellationToken cancellation) {
 
-            string dataJson = JsonConvert.SerializeObject(entities);
+            string dataJson = JsonConvert.SerializeObject(entities, _jsonSettings);
     
             UnityWebRequest www = CreatePostRequest($"{_options.ServiceAddress}/db{_options.DbId}/report_id/{reportId}", dataJson);
 
