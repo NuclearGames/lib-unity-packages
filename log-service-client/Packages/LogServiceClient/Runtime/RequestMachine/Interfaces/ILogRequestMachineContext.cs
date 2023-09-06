@@ -10,7 +10,7 @@ using System.Threading;
 namespace LogServiceClient.Runtime.RequestMachine.Interfaces {
     public interface ILogRequestMachineContext {
         ILogServiceRequester Requester { get; }
-        ISendLogBuffer SendBuffer { get; }
+        ILogBuffer<SendLogEntry> SendBuffer { get; }
         ILogMapper<SendLogEntry, LogEventEntity> SendLogEntryToLogEventEntityMapper { get; }
         ILogPool<LogEventEntity> LogEventEntityPool { get; }
 

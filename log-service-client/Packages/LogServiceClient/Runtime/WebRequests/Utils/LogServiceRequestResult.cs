@@ -22,7 +22,7 @@
         /// </summary>
         public string ErrorCode;
 
-        internal static LogServiceRequestResult Successful(long httpCode, string errorCode) {
+        public static LogServiceRequestResult Successful(long httpCode, string errorCode) {
             return new LogServiceRequestResult() {
                 Succeed = true,
                 HttpCode = httpCode,
@@ -30,7 +30,7 @@
             };
         }
 
-        internal static LogServiceRequestResult Failed() {
+        public static LogServiceRequestResult Failed() {
             return new LogServiceRequestResult() {
                 Succeed = false,
                 HttpCode = default,

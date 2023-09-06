@@ -56,7 +56,6 @@ namespace LogServiceClient.Runtime.RequestMachine.States {
         private void FillBuffer() {
             var sendBuffer = Machine.Context.SendBuffer;
 
-            // TODO: пул.
             while (sendBuffer.Count > 0 && _events.Count < Machine.Options.MaxLogsPerRequest) {
                 var entity =  Machine.Context.LogEventEntityPool.Get();
                 sendBuffer.MoveFirst(entity, Machine.Context.SendLogEntryToLogEventEntityMapper);

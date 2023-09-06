@@ -11,13 +11,13 @@ using System.Threading;
 namespace LogServiceClient.Runtime.RequestMachine {
     public sealed class LogRequestMachineContext : ILogRequestMachineContext {
         public ILogServiceRequester Requester { get; }
-        public ISendLogBuffer SendBuffer { get; }
+        public ILogBuffer<SendLogEntry> SendBuffer { get; }
         public ILogMapper<SendLogEntry, LogEventEntity> SendLogEntryToLogEventEntityMapper { get; }
         public ILogPool<LogEventEntity> LogEventEntityPool { get; }
 
         public LogRequestMachineContext(
-            ILogServiceRequester requester, 
-            ISendLogBuffer sendBuffer, 
+            ILogServiceRequester requester,
+            ILogBuffer<SendLogEntry> sendBuffer, 
             ILogMapper<SendLogEntry, LogEventEntity> sendLogEntryToLogEventEntityMapper, 
             ILogPool<LogEventEntity> logEventEntityPool) {
 
