@@ -8,7 +8,10 @@ namespace LogServiceClient.Runtime.Caches {
     public sealed class SendLogBuffer : BaseLogBuffer<SendLogEntry>, ISendLogBuffer {
         public event Action onLogsAdded;
 
-        public SendLogBuffer(ILogPool<SendLogEntry> pool) : base(pool) {
+        private readonly int _capacity;
+
+        public SendLogBuffer(ILogPool<SendLogEntry> pool, int capacity) : base(pool) {
+            _capacity = capacity;
         }
 
         public void MoveAllFrom<TSource>(ILogBuffer<TSource> source, ILogMapper<TSource, SendLogEntry> mapper) 
@@ -21,6 +24,10 @@ namespace LogServiceClient.Runtime.Caches {
                     entry.Index = Last != null
                         ? Last.Index + 1
                         : 0;
+
+                    if(Count >= _capacity) {
+                        RemoveFirst();
+                    }
 
                     AddLast(entry);
                 }

@@ -60,7 +60,7 @@ namespace UnitTests.Runtime.Caches {
 
             SourceBuffer = Substitute.For<ILogBuffer<ReceiveLogEntry>>();
 
-            Unit = new SendLogBuffer(Pool);
+            Unit = new SendLogBuffer(Pool, 50);
         }
 
         internal SendLogBufferUnitTestsFixture WithSourceEntry(ReceiveLogEntry entry) {

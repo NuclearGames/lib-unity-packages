@@ -28,6 +28,12 @@ namespace LogServiceClient.Runtime {
         public int ReceiveBufferCapacity { get; set; } = 50;
 
         /// <summary>
+        /// Максимальное кол-во логов, которые могут храниться в буфере для отправки.
+        /// Служит священной цели не поймать переполнение кучи, если сервер не отвечает.
+        /// </summary>
+        public int SendBufferCapacity { get; set; } = 200;
+
+        /// <summary>
         /// Вместимость кэша ошибок.
         /// </summary>
         public int ErrorCacheCapacity { get; set; } = 10;

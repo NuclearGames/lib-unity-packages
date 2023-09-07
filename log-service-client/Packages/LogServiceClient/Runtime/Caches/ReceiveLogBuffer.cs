@@ -19,11 +19,11 @@ namespace LogServiceClient.Runtime.Caches {
             entry.Time = time;
 
             lock (LockObj) {
-                AddLast(entry);
-
-                if (Count > _maxCount) {
+                if (Count >= _maxCount) {
                     RemoveFirst();
                 }
+
+                AddLast(entry);
             }
         }
     }

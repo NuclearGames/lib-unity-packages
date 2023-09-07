@@ -49,7 +49,7 @@ namespace LogServiceClient.Runtime {
             _requester = new LogServiceRequester(_options, _logServiceClientDeviceOptionsToLogDeviceInfoEntityMapper);
 
             _receiveBuffer = new ReceiveLogBuffer(_receivePool, _options.ReceiveBufferCapacity);
-            _sendBuffer = new SendLogBuffer(_sendPool);
+            _sendBuffer = new SendLogBuffer(_sendPool, _options.SendBufferCapacity);
             _logErrorCache = new LogErrorCache(_options.ErrorCacheCapacity);
 
             _logIdProvider = options.LogIdProvider;
