@@ -2,8 +2,8 @@
 using LogServiceClient.Runtime.RequestMachine.Enums;
 using LogServiceClient.Runtime.RequestMachine.Interfaces;
 using LogServiceClient.Runtime.RequestMachine.Utils;
+using System;
 using System.Threading;
-using UnityEngine;
 
 namespace LogServiceClient.Runtime.RequestMachine {
     public sealed class LogRequestMachine : ILogRequestMachineInternal {
@@ -39,27 +39,41 @@ namespace LogServiceClient.Runtime.RequestMachine {
 
             //Debug.Log($"[LogRequestMachine] Started");
 
-            foreach(var state in _states) {
-                state.Reset();
-            }
-
             StateIndex = string.IsNullOrEmpty(Variables.SessionId)
-                ? LogRequestStateIndex.GetSession
-                : LogRequestStateIndex.GetReport;
+              ? LogRequestStateIndex.GetSession
+              : LogRequestStateIndex.GetReport;
 
             //Debug.Log($"[LogRequestMachine] Initial State: {StateIndex}");
 
-            while (StateIndex != LogRequestStateIndex.None) {
-                var result = await GetCurrentState().ExecuteAsync(cancellation);
-                StateIndex = result.Index;
-                //Debug.Log($"[LogRequestMachine] MoveTo State: {StateIndex}");
+            try {
+
+                while (StateIndex != LogRequestStateIndex.None) {
+                    var result = await GetCurrentState().ExecuteAsync(cancellation);
+                    StateIndex = result.Index;
+                    //Debug.Log($"[LogRequestMachine] MoveTo State: {StateIndex}");
+                }
+
+            } catch (Exception) { 
+
+            } finally {
+
+                StateIndex = LogRequestStateIndex.None;
+                ResetStates();
+                Context.SendBuffer.Clear();
+
+                //Debug.Log($"[LogRequestMachine] Finished");
+
+                Thread.MemoryBarrier();
+                IsRunning = false;
+
             }
 
-            Context.SendBuffer.Clear();
+        }
 
-            //Debug.Log($"[LogRequestMachine] Finished");
-            Thread.MemoryBarrier();
-            IsRunning = false;
+        private void ResetStates() {
+            foreach (var state in _states) {
+                state.Reset();
+            }
         }
 
         private ILogRequestState GetCurrentState() {
