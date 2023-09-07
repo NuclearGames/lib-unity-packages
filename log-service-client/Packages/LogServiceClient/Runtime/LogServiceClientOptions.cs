@@ -1,11 +1,40 @@
-﻿using LogServiceClient.Runtime.Caches.Interfaces;
+﻿using LogServiceClient.Runtime.Caches;
+using LogServiceClient.Runtime.Caches.Interfaces;
 
 namespace LogServiceClient.Runtime {
     public sealed class LogServiceClientOptions {
+        /// <summary>
+        /// Адрес сервиса. 
+        /// (http(s)://ip:port)
+        /// </summary>
         public string ServiceAddress { get; set; }
+
+        /// <summary>
+        /// Идентификатор бд.
+        /// </summary>
         public string DbId { get; set; }
+
+        /// <summary>
+        /// Id устройства.
+        /// </summary>
         public string DeviceId { get; set; }
+
+        /// <summary>
+        /// Информация о устройстве.
+        /// </summary>
         public LogServiceClientDeviceOptions DeviceOptions { get; set; }
+
+        /// <summary>
+        /// Объект, возвращающий идентификатор лога.
+        /// 
+        /// <para>
+        /// <see cref="ConditionLogIdProvider" /> - возвращает текст лога.
+        /// </para>
+        /// 
+        /// <para>
+        ///  <see cref="StackTraceLogIdProvider" /> - создает ключ из стактрейса.
+        /// </para>
+        /// </summary>
         public ILogIdProvider LogIdProvider { get; set; }
 
         /// <summary>
