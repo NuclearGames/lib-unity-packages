@@ -11,19 +11,24 @@ namespace LogServiceClient.Runtime.RequestMachine {
         public LogRequestStateIndex StateIndex { get; private set; } = LogRequestStateIndex.None;
 
         public LogServiceClientOptions Options { get; }
-        public LogRequestMachineVariables Variables { get; }
+        public LogRequestMachineVariables Variables { get; } = new LogRequestMachineVariables();
 
 
         private readonly ILogRequestState[] _states;
 
-        public LogRequestMachine(ILogRequestMachineContext context, ILogRequestStateFactory stateFactory) {
+        public LogRequestMachine(
+            LogServiceClientOptions options, 
+            ILogRequestMachineContext context, 
+            ILogRequestStateFactory stateFactory) {
+
+            Options = options;
             Context = context;
 
             _states = new ILogRequestState[] { 
-                stateFactory.Create(LogRequestStateIndex.PutDevice),
-                stateFactory.Create(LogRequestStateIndex.GetSession),
-                stateFactory.Create(LogRequestStateIndex.GetReport),
-                stateFactory.Create(LogRequestStateIndex.PostEvents)
+                stateFactory.Create(LogRequestStateIndex.PutDevice, this),
+                stateFactory.Create(LogRequestStateIndex.GetSession, this),
+                stateFactory.Create(LogRequestStateIndex.GetReport, this),
+                stateFactory.Create(LogRequestStateIndex.PostEvents, this)
             };
         }
 

@@ -2,6 +2,6 @@
 
 namespace LogServiceClient.Runtime.RequestMachine.Interfaces {
     public interface ILogRequestStateFactory {
-        ILogRequestState Create(LogRequestStateIndex state);
+        ILogRequestState Create(LogRequestStateIndex state, ILogRequestMachineInternal machine);
     }
 }

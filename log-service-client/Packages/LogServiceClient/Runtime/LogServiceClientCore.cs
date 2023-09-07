@@ -50,7 +50,7 @@ namespace LogServiceClient.Runtime {
                 _sendLogEntryToLogEventEntityMapper,
                 _logEventEntityPool);
 
-            _requestMachine = new LogRequestMachine(_context, new LogRequestStateFactory());
+            _requestMachine = new LogRequestMachine(_options, _context, new LogRequestStateFactory());
 
             _sendBuffer.onLogsAdded += OnSendBufferLogsAdded;
         }
