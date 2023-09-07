@@ -81,6 +81,10 @@ namespace LogServiceClient.Runtime {
             _logMessageReceiveHandler.Dispose();
         }
 
+        /// <summary>
+        /// Запускает автомат отправки логов, 
+        /// если он еще не запущен и есть хотя бы один лог для отправки.
+        /// </summary>
         public void TryRun() {
             if(!_requestMachine.IsRunning && _sendBuffer.Count > 0) {
                 // UnityWebRequest падает с ошибкой: Create can only be called from the main thread.
