@@ -1,4 +1,6 @@
-﻿namespace LogServiceClient.Runtime.WebRequests.Utils {
+﻿using LogServiceClient.Runtime.Constants;
+
+namespace LogServiceClient.Runtime.WebRequests.Utils {
     public struct LogServiceRequestResult {
         /// <summary>
         /// <para>
@@ -20,9 +22,9 @@
         /// Наш внутренний код ошибки.
         /// Если сервер не ответил или запрос успешен, будет иметь значение по умолчанию (null).
         /// </summary>
-        public string ErrorCode;
+        public LogServiceInternalResultCodes? ErrorCode;
 
-        public static LogServiceRequestResult Successful(long httpCode, string errorCode) {
+        public static LogServiceRequestResult Successful(long httpCode, LogServiceInternalResultCodes? errorCode) {
             return new LogServiceRequestResult() {
                 Succeed = true,
                 HttpCode = httpCode,

@@ -1,4 +1,5 @@
 ﻿using Cysharp.Threading.Tasks;
+using LogServiceClient.Runtime.Constants;
 using LogServiceClient.Runtime.Mappers.Interfaces;
 using LogServiceClient.Runtime.WebRequests.Interfaces;
 using LogServiceClient.Runtime.WebRequests.Utils;
@@ -8,7 +9,6 @@ using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using UnityEngine;
 using UnityEngine.Networking;
 
 namespace LogServiceClient.Runtime.WebRequests {
@@ -93,7 +93,7 @@ namespace LogServiceClient.Runtime.WebRequests {
             bool succeed = www.result == UnityWebRequest.Result.Success || www.result == UnityWebRequest.Result.ProtocolError;
 
             TryParseData(resultStringData, out var json);
-            string errorCode = json?.Value<string>("errorCode");
+            var errorCode = (LogServiceInternalResultCodes)json?.Value<int>("errorCode");
 
             //Debug.Log($"[LogServiceRequester] ({www.uri}) {www.result}, {resultStringData}");
 
