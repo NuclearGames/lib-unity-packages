@@ -1,12 +1,11 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace LogServiceClient.Runtime.Caches.Utils {
     public sealed class SendLogEntry : BaseLogEntry<SendLogEntry> {
         public string Condition { get; set; }
         public string StackTrace { get; set; }
         public LogType Type { get; set; }
-        public DateTime Time { get; set; }
+        public long Time { get; set; }
         public int Index { get; set; }
 
         public override void Reset() {

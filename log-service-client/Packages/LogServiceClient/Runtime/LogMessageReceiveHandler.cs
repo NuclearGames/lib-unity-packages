@@ -3,6 +3,7 @@ using LogServiceClient.Runtime.Caches.Utils;
 using LogServiceClient.Runtime.Mappers.Interfaces;
 using System;
 using UnityEngine;
+using static log4net.Appender.RollingFileAppender;
 
 namespace LogServiceClient.Runtime {
     public sealed class LogMessageReceiveHandler : IDisposable {
@@ -27,7 +28,7 @@ namespace LogServiceClient.Runtime {
         }
 
         private void OnLogMessageReceived(string condition, string stackTrace, LogType type) {
-            _receiveBuffer.StoreEntry(condition, stackTrace, type, DateTime.UtcNow);
+            _receiveBuffer.StoreEntry(condition, stackTrace, type, new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds());
 
             if (type == LogType.Exception || type == LogType.Error) {
                 _sendBuffer.MoveAllFrom(_receiveBuffer, _mapper);

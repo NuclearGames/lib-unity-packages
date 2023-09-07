@@ -22,6 +22,8 @@ namespace LogServiceClient.Runtime.WebRequests {
             ContractResolver = new CamelCasePropertyNamesContractResolver()
         };
 
+        private readonly Dictionary<string, object> _jsonMapBuffer = new Dictionary<string, object>();
+
         private LogDeviceInfoEntity _deviceInfoEntity;
 
         public LogServiceRequester(
@@ -38,7 +40,7 @@ namespace LogServiceClient.Runtime.WebRequests {
 
             string dataJson = JsonConvert.SerializeObject(_deviceInfoEntity, _jsonSettings);
 
-            UnityWebRequest www = UnityWebRequest.Put($"{_options.ServiceAddress}/device_id/db/{_options.DbId}/device_id/{_options.DeviceId}", 
+            UnityWebRequest www = CreatePutRequest($"{_options.ServiceAddress}/device_id/db/{_options.DbId}/device_id/{_options.DeviceId}",
                 dataJson);
 
             var (result, _) = await PerformRequest(www, cancellation);
@@ -75,7 +77,9 @@ namespace LogServiceClient.Runtime.WebRequests {
         public async UniTask<LogServiceRequestResult> PostEvents(string reportId, List<LogEventEntity> entities, 
             CancellationToken cancellation) {
 
-            string dataJson = JsonConvert.SerializeObject(entities, _jsonSettings);
+            _jsonMapBuffer.Clear();
+            _jsonMapBuffer["entities"] = entities;
+            string dataJson = JsonConvert.SerializeObject(_jsonMapBuffer, _jsonSettings);
     
             UnityWebRequest www = CreatePostRequest($"{_options.ServiceAddress}/events/db/{_options.DbId}/report_id/{reportId}", dataJson);
 
@@ -95,7 +99,7 @@ namespace LogServiceClient.Runtime.WebRequests {
             TryParseData(resultStringData, out var json);
             var errorCode = (LogServiceInternalResultCodes)json?.Value<int>("errorCode");
 
-            //Debug.Log($"[LogServiceRequester] ({www.uri}) {www.result}, {resultStringData}");
+            //UnityEngine.Debug.Log($"[LogServiceRequester] ({www.uri}) {www.result}, {resultStringData}");
 
             var result = succeed
                 ? LogServiceRequestResult.Successful(www.responseCode, errorCode)
@@ -108,6 +112,14 @@ namespace LogServiceClient.Runtime.WebRequests {
             UnityWebRequest www = UnityWebRequest.Put(url, dataJson);
 
             www.method = UnityWebRequest.kHttpVerbPOST;
+            www.SetRequestHeader("Content-Type", "application/json");
+
+            return www;
+        }
+
+        private UnityWebRequest CreatePutRequest(string url, string dataJson) {
+            UnityWebRequest www = UnityWebRequest.Put(url, dataJson);
+
             www.SetRequestHeader("Content-Type", "application/json");
 
             return www;
