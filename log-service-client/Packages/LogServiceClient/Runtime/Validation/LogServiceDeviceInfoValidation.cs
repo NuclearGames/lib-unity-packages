@@ -38,6 +38,14 @@ namespace LogServiceClient.Runtime.Validation {
             if (options.LogIdProvider == null) {
                 ExceptionsHelper.ThrowArgumentException("LogIdProvider not provided");
             }
+
+            if(options.CaptureLogTypes == Enums.LogTypeFlags.Nothing) {
+                ExceptionsHelper.ThrowArgumentException("CaptureLogTypes can not be empty");
+            }
+
+            if (options.StartSendLogTypes == Enums.LogTypeFlags.Nothing) {
+                ExceptionsHelper.ThrowArgumentException("StartSendLogTypes can not be empty");
+            }
         }
 
         private static string Trunc(string src, int maxLen) {

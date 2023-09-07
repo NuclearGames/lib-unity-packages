@@ -57,6 +57,7 @@ namespace LogServiceClient.Runtime {
             _logIdProvider = options.LogIdProvider;
 
             _logMessageReceiveHandler = new LogMessageReceiveHandler(
+                _options,
                 _receiveBuffer, _sendBuffer,
                 _receiveLogEntryToSendLogEntryMapper,
                 _logErrorCache,
