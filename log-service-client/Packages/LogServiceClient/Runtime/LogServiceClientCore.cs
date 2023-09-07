@@ -6,6 +6,7 @@ using LogServiceClient.Runtime.Mappers;
 using LogServiceClient.Runtime.Pools;
 using LogServiceClient.Runtime.RequestMachine;
 using LogServiceClient.Runtime.RequestMachine.Factories;
+using LogServiceClient.Runtime.Validation;
 using LogServiceClient.Runtime.WebRequests;
 using LogServiceClient.Runtime.WebRequests.Utils;
 using System;
@@ -36,6 +37,7 @@ namespace LogServiceClient.Runtime {
         private readonly CancellationTokenSource _lifetimeCts;
 
         public LogServiceClientCore(LogServiceClientOptions options) {
+            LogServiceDeviceInfoValidation.Validate(options);
             _options = options;
 
             _receiveLogEntryToSendLogEntryMapper = new ReceiveLogEntryToSendLogEntryMapper();

@@ -8,24 +8,18 @@ namespace Sandbox {
 
         private void Awake() {
             _client = new LogServiceClientCore(new LogServiceClientOptions() { 
+                ValidationOptions = new LogServiceClientValidationOptions(),
+
                 ServiceAddress = "http://127.0.0.1:5188",
                 DbId = "warplane_inc_online",
-                //DeviceId = SystemInfo.deviceUniqueIdentifier,
-                /* DeviceOptions = new LogServiceClientDeviceOptions() { 
-                     Model = SystemInfo.deviceModel,
-                     Name = SystemInfo.deviceName,
-                     OperatingSystem = SystemInfo.operatingSystem,
-                     OperatingSystemFamily = SystemInfo.operatingSystemFamily.ToString(),
-                     ProcessorType = SystemInfo.processorType,
-                 },*/
 
-                DeviceId = "device A",
-                DeviceOptions = new LogServiceClientDeviceOptions() { 
-                  Model = "testmodel",  
-                  Name = "testname",
-                  OperatingSystem = "somesortofandroid",
-                  OperatingSystemFamily = "unix",
-                  ProcessorType = "cpu123"
+                DeviceId = SystemInfo.deviceUniqueIdentifier,
+                DeviceOptions = new LogServiceClientDeviceOptions() {
+                    Model = SystemInfo.deviceModel,
+                    Name = SystemInfo.deviceName,
+                    OperatingSystem = SystemInfo.operatingSystem,
+                    OperatingSystemFamily = SystemInfo.operatingSystemFamily.ToString(),
+                    ProcessorType = SystemInfo.processorType,
                 },
 
                 //LogIdProvider = new ConditionLogIdProvider()

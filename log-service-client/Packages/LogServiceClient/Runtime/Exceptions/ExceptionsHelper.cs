@@ -9,5 +9,9 @@ namespace LogServiceClient.Runtime.Exceptions {
         internal static void ThrowNotImplementedException(string message = null) {
             throw new NotImplementedException(message);
         }
+
+        internal static void ThrowArgumentException(string message = null) {
+            throw new ArgumentException(message);
+        }
     }
 }

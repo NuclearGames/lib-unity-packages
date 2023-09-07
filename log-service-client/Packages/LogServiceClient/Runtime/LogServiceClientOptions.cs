@@ -4,6 +4,11 @@ using LogServiceClient.Runtime.Caches.Interfaces;
 namespace LogServiceClient.Runtime {
     public sealed class LogServiceClientOptions {
         /// <summary>
+        /// Настройки для валидации содержимого.
+        /// </summary>
+        public LogServiceClientValidationOptions ValidationOptions { get; set; }
+
+        /// <summary>
         /// Адрес сервиса. 
         /// (http(s)://ip:port)
         /// </summary>
@@ -23,6 +28,7 @@ namespace LogServiceClient.Runtime {
         /// Информация о устройстве.
         /// </summary>
         public LogServiceClientDeviceOptions DeviceOptions { get; set; }
+
 
         /// <summary>
         /// Объект, возвращающий идентификатор лога.
@@ -88,6 +94,15 @@ namespace LogServiceClient.Runtime {
         /// </summary>
         public int EventEntityPoolCapacity { get; set; } = 50;
 
+    }
+
+    public sealed class LogServiceClientValidationOptions {
+        public int DeviceIdMaxLength { get; set; } = 128;
+        public int DeviceModelMaxLength { get; set; } = 50;
+        public int DeviceNameMaxLength { get; set; } = 50;
+        public int DeviceOperatingSystemMaxLength { get; set; } = 30;
+        public int DeviceOperatingSystemFamilyMaxLength { get; set; } = 30;
+        public int DeviceProcessorTypeMaxLength { get; set; } = 30;
     }
 
     public sealed class LogServiceClientDeviceOptions {
