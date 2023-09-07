@@ -1,5 +1,6 @@
 ﻿using Cysharp.Threading.Tasks;
 using LogServiceClient.Runtime.Caches;
+using LogServiceClient.Runtime.Caches.Interfaces;
 using LogServiceClient.Runtime.Caches.Utils;
 using LogServiceClient.Runtime.Mappers;
 using LogServiceClient.Runtime.Pools;
@@ -13,11 +14,17 @@ namespace LogServiceClient.Runtime {
     public sealed class LogServiceClientCore : IDisposable {
         private readonly LogServiceClientOptions _options;
         private readonly LogServiceRequester _requester;
+
         private readonly LogPool<ReceiveLogEntry> _receivePool;
         private readonly LogPool<SendLogEntry> _sendPool;
         private readonly LogPool<LogEventEntity> _logEventEntityPool;
+
         private readonly ReceiveLogBuffer _receiveBuffer;
         private readonly SendLogBuffer _sendBuffer;
+        private readonly ILogErrorCache _logErrorCache;
+
+        private readonly ILogIdProvider _logIdProvider;
+
         private readonly ReceiveLogEntryToSendLogEntryMapper _receiveLogEntryToSendLogEntryMapper;
         private readonly SendLogEntryToLogEventEntityMapper _sendLogEntryToLogEventEntityMapper;
         private readonly LogServiceClientDeviceOptionsToLogDeviceInfoEntityMapper _logServiceClientDeviceOptionsToLogDeviceInfoEntityMapper;
@@ -40,9 +47,15 @@ namespace LogServiceClient.Runtime {
 
             _receiveBuffer = new ReceiveLogBuffer(_receivePool, _options.ReceiveBufferCapacity);
             _sendBuffer = new SendLogBuffer(_sendPool);
+            _logErrorCache = new LogErrorCache(_options.ErrorCacheCapacity);
 
-            _logMessageReceiveHandler = new LogMessageReceiveHandler(_receiveBuffer, _sendBuffer,
-                _receiveLogEntryToSendLogEntryMapper);
+            _logIdProvider = options.LogIdProvider;
+
+            _logMessageReceiveHandler = new LogMessageReceiveHandler(
+                _receiveBuffer, _sendBuffer,
+                _receiveLogEntryToSendLogEntryMapper,
+                _logErrorCache,
+                _logIdProvider);
 
             _context = new LogRequestMachineContext(
                 _requester,
