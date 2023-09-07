@@ -6,6 +6,7 @@ namespace LogServiceClient.Runtime {
         public string DbId { get; set; }
         public string DeviceId { get; set; }
         public LogServiceClientDeviceOptions DeviceOptions { get; set; }
+        public ILogIdProvider LogIdProvider { get; set; }
 
         /// <summary>
         /// Максимальное число логов, которое может быть отправлено за один запрос.
@@ -58,7 +59,6 @@ namespace LogServiceClient.Runtime {
         /// </summary>
         public int EventEntityPoolCapacity { get; set; } = 50;
 
-        public ILogIdProvider LogIdProvider { get; set; }
     }
 
     public sealed class LogServiceClientDeviceOptions {

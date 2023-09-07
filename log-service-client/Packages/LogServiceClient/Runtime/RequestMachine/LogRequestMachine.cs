@@ -3,6 +3,7 @@ using LogServiceClient.Runtime.RequestMachine.Enums;
 using LogServiceClient.Runtime.RequestMachine.Interfaces;
 using LogServiceClient.Runtime.RequestMachine.Utils;
 using System.Threading;
+using UnityEngine;
 
 namespace LogServiceClient.Runtime.RequestMachine {
     public sealed class LogRequestMachine : ILogRequestMachineInternal {
@@ -36,6 +37,8 @@ namespace LogServiceClient.Runtime.RequestMachine {
             IsRunning = true;
             Thread.MemoryBarrier();
 
+            //Debug.Log($"[LogRequestMachine] Started");
+
             foreach(var state in _states) {
                 state.Reset();
             }
@@ -44,11 +47,15 @@ namespace LogServiceClient.Runtime.RequestMachine {
                 ? LogRequestStateIndex.GetSession
                 : LogRequestStateIndex.GetReport;
 
+            //Debug.Log($"[LogRequestMachine] Initial State: {StateIndex}");
+
             while (StateIndex != LogRequestStateIndex.None) {
                 var result = await GetCurrentState().ExecuteAsync(cancellation);
                 StateIndex = result.Index;
+                //Debug.Log($"[LogRequestMachine] MoveTo State: {StateIndex}");
             }
 
+            //Debug.Log($"[LogRequestMachine] Finished");
             Thread.MemoryBarrier();
             IsRunning = false;
         }

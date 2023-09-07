@@ -22,7 +22,7 @@ namespace LogServiceClient.Runtime {
 
         private readonly ReceiveLogBuffer _receiveBuffer;
         private readonly SendLogBuffer _sendBuffer;
-        private readonly ILogErrorCache _logErrorCache;
+        private readonly LogErrorCache _logErrorCache;
 
         private readonly ILogIdProvider _logIdProvider;
 
