@@ -40,7 +40,12 @@ namespace LogServiceClient.Runtime {
         /// <summary>
         /// Размера пула отправляемых логов.
         /// </summary>
-        public int SendBufferPoolCapacity { get; set; } = 70;
+        public int SendBufferPoolStartCapacity { get; set; } = 50;
+
+        /// <summary>
+        /// Размера пула отправляемых логов.
+        /// </summary>
+        public int SendBufferPoolMaxCapacity { get; set; } = 100;
 
         /// <summary>
         /// Размера пула отправляемых сущностей.

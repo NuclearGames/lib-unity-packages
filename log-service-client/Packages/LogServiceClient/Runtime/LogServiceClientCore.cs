@@ -9,6 +9,7 @@ using LogServiceClient.Runtime.RequestMachine.Factories;
 using LogServiceClient.Runtime.WebRequests;
 using LogServiceClient.Runtime.WebRequests.Utils;
 using System;
+using System.Threading;
 
 namespace LogServiceClient.Runtime {
     public sealed class LogServiceClientCore : IDisposable {
@@ -32,6 +33,9 @@ namespace LogServiceClient.Runtime {
         private readonly LogRequestMachineContext _context;
         private readonly LogRequestMachine _requestMachine;
 
+        private readonly Func<UniTask> _runMachineAction;
+        private readonly CancellationTokenSource _lifetimeCts;
+
         public LogServiceClientCore(LogServiceClientOptions options) {
             _options = options;
 
@@ -39,9 +43,9 @@ namespace LogServiceClient.Runtime {
             _sendLogEntryToLogEventEntityMapper = new SendLogEntryToLogEventEntityMapper();
             _logServiceClientDeviceOptionsToLogDeviceInfoEntityMapper = new LogServiceClientDeviceOptionsToLogDeviceInfoEntityMapper();
 
-            _receivePool = new LogPool<ReceiveLogEntry>(_options.ReceiveBufferPoolCapacity);
-            _sendPool = new LogPool<SendLogEntry>(_options.SendBufferPoolCapacity);
-            _logEventEntityPool = new LogPool<LogEventEntity>(_options.EventEntityPoolCapacity);
+            _receivePool = new LogPool<ReceiveLogEntry>(_options.ReceiveBufferPoolCapacity, _options.ReceiveBufferPoolCapacity);
+            _sendPool = new LogPool<SendLogEntry>(_options.SendBufferPoolStartCapacity, _options.SendBufferPoolMaxCapacity);
+            _logEventEntityPool = new LogPool<LogEventEntity>(_options.EventEntityPoolCapacity, _options.EventEntityPoolCapacity);
 
             _requester = new LogServiceRequester(_options, _logServiceClientDeviceOptionsToLogDeviceInfoEntityMapper);
 
@@ -65,10 +69,15 @@ namespace LogServiceClient.Runtime {
 
             _requestMachine = new LogRequestMachine(_options, _context, new LogRequestStateFactory());
 
+            _lifetimeCts = new CancellationTokenSource();
+            _runMachineAction = async () => await _requestMachine.Run(_lifetimeCts.Token);
+
             _sendBuffer.onLogsAdded += OnSendBufferLogsAdded;
         }
 
         public void Dispose() {
+            _lifetimeCts.Cancel();
+
             _sendBuffer.onLogsAdded -= OnSendBufferLogsAdded;
 
             _logMessageReceiveHandler.Dispose();
@@ -76,7 +85,10 @@ namespace LogServiceClient.Runtime {
 
         public void TryRun() {
             if(!_requestMachine.IsRunning && _sendBuffer.Count > 0) {
-                _requestMachine.Run().Forget();
+                // UnityWebRequest падает с ошибкой: Create can only be called from the main thread.
+                // UniTask.RunOnThreadPool(_runMachineAction, cancellationToken: _lifetimeCts.Token);
+
+                _runMachineAction();
             }
         }
 

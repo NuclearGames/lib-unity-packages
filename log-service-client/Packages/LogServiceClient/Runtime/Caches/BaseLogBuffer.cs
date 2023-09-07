@@ -10,6 +10,8 @@ namespace LogServiceClient.Runtime {
         public T First { get; private set; }
         protected T Last { get; private set; }
 
+        protected readonly object LockObj = new object();
+
         private readonly ILogPool<T> _pool;
 
         public BaseLogBuffer(ILogPool<T> pool) {
@@ -17,13 +19,15 @@ namespace LogServiceClient.Runtime {
         }
 
         public void MoveFirst<TTarget>(TTarget target, ILogMapper<T, TTarget> mapper) {
-            if (First == null) {
-                ExceptionsHelper.ThrowInvalidOperationException("Buffer is empty");
-                return;
-            }
+            lock (LockObj) {
+                if (First == null) {
+                    ExceptionsHelper.ThrowInvalidOperationException("Buffer is empty");
+                    return;
+                }
 
-            mapper.Copy(First, target);
-            RemoveFirst();
+                mapper.Copy(First, target);
+                RemoveFirst();
+            }
         }
 
         protected T GetFromPool() {

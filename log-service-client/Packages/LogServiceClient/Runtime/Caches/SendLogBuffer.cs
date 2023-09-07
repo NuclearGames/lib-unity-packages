@@ -14,14 +14,16 @@ namespace LogServiceClient.Runtime.Caches {
         public void MoveAllFrom<TSource>(ILogBuffer<TSource> source, ILogMapper<TSource, SendLogEntry> mapper) 
             where TSource : BaseLogEntry<TSource> {
 
-            while(source.Count > 0) {
-                var entry = GetFromPool();
-                source.MoveFirst(entry, mapper);
-                entry.Index = Last != null
-                    ? Last.Index + 1
-                    : 0;
+            lock (LockObj) {
+                while (source.Count > 0) {
+                    var entry = GetFromPool();
+                    source.MoveFirst(entry, mapper);
+                    entry.Index = Last != null
+                        ? Last.Index + 1
+                        : 0;
 
-                AddLast(entry);
+                    AddLast(entry);
+                }
             }
 
             onLogsAdded?.Invoke();
