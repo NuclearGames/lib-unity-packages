@@ -13,5 +13,10 @@ namespace LogServiceClient.Runtime.Caches.Interfaces {
         /// Исходный объект удаляется из буфера.
         /// </summary>
         void MoveFirst<TTarget>(TTarget target, ILogMapper<T, TTarget> mapper);
+
+        /// <summary>
+        /// Очищает буфер.
+        /// </summary>
+        void Clear();
     }
 }

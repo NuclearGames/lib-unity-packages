@@ -55,6 +55,8 @@ namespace LogServiceClient.Runtime.RequestMachine {
                 //Debug.Log($"[LogRequestMachine] MoveTo State: {StateIndex}");
             }
 
+            Context.SendBuffer.Clear();
+
             //Debug.Log($"[LogRequestMachine] Finished");
             Thread.MemoryBarrier();
             IsRunning = false;

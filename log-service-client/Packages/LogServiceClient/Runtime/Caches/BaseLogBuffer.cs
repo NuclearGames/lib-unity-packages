@@ -31,6 +31,14 @@ namespace LogServiceClient.Runtime {
             }
         }
 
+        public void Clear() {
+            lock (LockObj) {
+                while(Count > 0) {
+                    RemoveFirst();
+                }
+            }
+        }
+
         protected T GetFromPool() {
             return _pool.Get();
         }
