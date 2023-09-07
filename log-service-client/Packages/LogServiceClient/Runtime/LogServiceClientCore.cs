@@ -33,7 +33,6 @@ namespace LogServiceClient.Runtime {
         private readonly LogRequestMachineContext _context;
         private readonly LogRequestMachine _requestMachine;
 
-        private readonly Func<UniTask> _runMachineAction;
         private readonly CancellationTokenSource _lifetimeCts;
 
         public LogServiceClientCore(LogServiceClientOptions options) {
@@ -70,7 +69,6 @@ namespace LogServiceClient.Runtime {
             _requestMachine = new LogRequestMachine(_options, _context, new LogRequestStateFactory());
 
             _lifetimeCts = new CancellationTokenSource();
-            _runMachineAction = async () => await _requestMachine.Run(_lifetimeCts.Token);
 
             _sendBuffer.onLogsAdded += OnSendBufferLogsAdded;
         }
@@ -88,7 +86,7 @@ namespace LogServiceClient.Runtime {
                 // UnityWebRequest падает с ошибкой: Create can only be called from the main thread.
                 // UniTask.RunOnThreadPool(_runMachineAction, cancellationToken: _lifetimeCts.Token);
 
-                _runMachineAction();
+                _requestMachine.Run(_lifetimeCts.Token).Forget();
             }
         }
 

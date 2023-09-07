@@ -97,7 +97,7 @@ namespace LogServiceClient.Runtime.WebRequests {
             bool succeed = www.result == UnityWebRequest.Result.Success || www.result == UnityWebRequest.Result.ProtocolError;
 
             TryParseData(resultStringData, out var json);
-            var errorCode = (LogServiceInternalResultCodes)json?.Value<int>("errorCode");
+            var errorCode = (LogServiceInternalResultCodes?)json?.Value<int>("errorCode");
 
             //UnityEngine.Debug.Log($"[LogServiceRequester] ({www.uri}) {www.result}, {resultStringData}");
 

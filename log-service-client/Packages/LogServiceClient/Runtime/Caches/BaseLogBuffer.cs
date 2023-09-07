@@ -1,4 +1,5 @@
-﻿using LogServiceClient.Runtime.Caches.Interfaces;
+﻿using Codice.Client.BaseCommands;
+using LogServiceClient.Runtime.Caches.Interfaces;
 using LogServiceClient.Runtime.Caches.Utils;
 using LogServiceClient.Runtime.Exceptions;
 using LogServiceClient.Runtime.Mappers.Interfaces;
@@ -52,7 +53,13 @@ namespace LogServiceClient.Runtime {
 
             Count--;
             var itemToRemove = First;
-            First = First.Next;
+
+            if(First == Last) {
+                First = Last = null;
+            } else {
+                First = First.Next;
+            }
+
             _pool.Return(itemToRemove);
         }
     }
