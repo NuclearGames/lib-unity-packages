@@ -1,5 +1,6 @@
 ﻿using LogServiceClient.Runtime.Caches;
 using LogServiceClient.Runtime.Caches.Interfaces;
+using LogServiceClient.Runtime.Enums;
 
 namespace LogServiceClient.Runtime {
     public sealed class LogServiceClientOptions {
@@ -42,6 +43,23 @@ namespace LogServiceClient.Runtime {
         /// </para>
         /// </summary>
         public ILogIdProvider LogIdProvider { get; set; }
+
+
+        /// <summary>
+        /// Нужно ли собирать стактрейсы.
+        /// </summary>
+        public bool CaptureStackTrace { get; set; } = true;
+
+        /// <summary>
+        /// Собираемые типы логов.
+        /// </summary>
+        public LogTypeFlags CaptureLogTypes { get; set; } = LogTypeFlags.All;
+
+        /// <summary>
+        /// Типы логов, которые инициируют отправку.
+        /// </summary>
+        public LogTypeFlags StartSendLogTypes { get; set; } = LogTypeFlags.Error | LogTypeFlags.Assert | LogTypeFlags.Exception;
+
 
         /// <summary>
         /// Максимальное число логов, которое может быть отправлено за один запрос.
@@ -87,7 +105,7 @@ namespace LogServiceClient.Runtime {
         /// <summary>
         /// Размера пула отправляемых логов.
         /// </summary>
-        public int SendBufferPoolMaxCapacity { get; set; } = 100;
+        public int SendBufferPoolMaxCapacity { get; set; } = 80;
 
         /// <summary>
         /// Размера пула отправляемых сущностей.
