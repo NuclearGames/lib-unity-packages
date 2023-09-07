@@ -8,6 +8,7 @@ using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using UnityEngine;
 using UnityEngine.Networking;
 
 namespace LogServiceClient.Runtime.WebRequests {
@@ -37,7 +38,7 @@ namespace LogServiceClient.Runtime.WebRequests {
 
             string dataJson = JsonConvert.SerializeObject(_deviceInfoEntity, _jsonSettings);
 
-            UnityWebRequest www = UnityWebRequest.Put($"{_options.ServiceAddress}/db{_options.DbId}/device_id/{_options.DeviceId}", 
+            UnityWebRequest www = UnityWebRequest.Put($"{_options.ServiceAddress}/device_id/db/{_options.DbId}/device_id/{_options.DeviceId}", 
                 dataJson);
 
             var (result, _) = await PerformRequest(www, cancellation);
@@ -46,7 +47,7 @@ namespace LogServiceClient.Runtime.WebRequests {
         }
 
         public async UniTask<LogServiceGetSessionResult> GetSession(CancellationToken cancellation) {
-            UnityWebRequest www = UnityWebRequest.Get($"{_options.ServiceAddress}/db{_options.DbId}/device_id/{_options.DeviceId}");
+            UnityWebRequest www = UnityWebRequest.Get($"{_options.ServiceAddress}/session_id/db/{_options.DbId}/device_id/{_options.DeviceId}");
 
             var (result, json) = await PerformRequest(www, cancellation);
 
@@ -59,7 +60,7 @@ namespace LogServiceClient.Runtime.WebRequests {
         }
 
         public async UniTask<LogServiceGetReportResult> GetReport(string sessionId, CancellationToken cancellation) {
-            UnityWebRequest www = UnityWebRequest.Get($"{_options.ServiceAddress}/db{_options.DbId}/session_id/{sessionId}");
+            UnityWebRequest www = UnityWebRequest.Get($"{_options.ServiceAddress}/report_id/db/{_options.DbId}/session_id/{sessionId}");
 
             var (result, json) = await PerformRequest(www, cancellation);
 
@@ -76,7 +77,7 @@ namespace LogServiceClient.Runtime.WebRequests {
 
             string dataJson = JsonConvert.SerializeObject(entities, _jsonSettings);
     
-            UnityWebRequest www = CreatePostRequest($"{_options.ServiceAddress}/db{_options.DbId}/report_id/{reportId}", dataJson);
+            UnityWebRequest www = CreatePostRequest($"{_options.ServiceAddress}/events/db/{_options.DbId}/report_id/{reportId}", dataJson);
 
             var (result, _) = await PerformRequest(www, cancellation);
 
@@ -86,15 +87,15 @@ namespace LogServiceClient.Runtime.WebRequests {
         private async UniTask<(LogServiceRequestResult Result, JObject Json)> PerformRequest(UnityWebRequest www, CancellationToken cancellation) {
             try {
                 await www.SendWebRequest().ToUniTask(cancellationToken: cancellation);
-            } catch (Exception) {
-                return (LogServiceRequestResult.Failed(), null);
-            }
+            } catch (Exception) { }
 
             string resultStringData = www.downloadHandler.text;
             bool succeed = www.result == UnityWebRequest.Result.Success || www.result == UnityWebRequest.Result.ProtocolError;
 
             TryParseData(resultStringData, out var json);
             string errorCode = json?.Value<string>("errorCode");
+
+            //Debug.Log($"[LogServiceRequester] ({www.uri}) {www.result}, {resultStringData}");
 
             var result = succeed
                 ? LogServiceRequestResult.Successful(www.responseCode, errorCode)
