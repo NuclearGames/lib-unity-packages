@@ -24,7 +24,7 @@ namespace LogServiceClient.Runtime.RequestMachine.States {
                 _events, cancellation);
 
             if (!result.Succeed) {
-                return await Retry(cancellation);
+                return Exit();
             }
 
             if (LogServiceResultCodes.PostEvents.Internal.Check(result.HttpCode, result.ErrorCode)) {

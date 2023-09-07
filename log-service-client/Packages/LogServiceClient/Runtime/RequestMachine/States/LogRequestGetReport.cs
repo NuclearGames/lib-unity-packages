@@ -16,7 +16,7 @@ namespace LogServiceClient.Runtime.RequestMachine.States {
             var result = await Machine.Context.Requester.GetReport(Machine.Variables.SessionId, cancellation);
 
             if (!result.Request.Succeed) {
-                return await Retry(cancellation);
+                return Exit();
             }
 
             if (LogServiceResultCodes.GetReport.Internal.Check(result.Request.HttpCode, result.Request.ErrorCode)) {

@@ -16,7 +16,7 @@ namespace LogServiceClient.Runtime.RequestMachine.States {
             var result = await Machine.Context.Requester.PutDevice(cancellation);
 
             if (!result.Succeed) {
-                return await Retry(cancellation);
+                return Exit();
             }
 
             if(LogServiceResultCodes.PutDevice.Internal.Check(result.HttpCode, result.ErrorCode)) {
