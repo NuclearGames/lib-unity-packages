@@ -1,5 +1,6 @@
 ﻿using Cysharp.Threading.Tasks;
 using LogServiceClient.Runtime.Constants;
+using LogServiceClient.Runtime.Exceptions;
 using LogServiceClient.Runtime.Mappers.Interfaces;
 using LogServiceClient.Runtime.WebRequests.Interfaces;
 using LogServiceClient.Runtime.WebRequests.Utils;
@@ -62,6 +63,10 @@ namespace LogServiceClient.Runtime.WebRequests {
         }
 
         public async UniTask<LogServiceGetReportResult> GetReport(string sessionId, CancellationToken cancellation) {
+            if(string.IsNullOrWhiteSpace(sessionId)) {
+                ExceptionsHelper.ThrowArgumentException();
+            }
+
             UnityWebRequest www = UnityWebRequest.Get($"{_options.ServiceAddress}/report_id/db/{_options.DbId}/session_id/{sessionId}");
 
             var (result, json) = await PerformRequest(www, cancellation);
@@ -76,6 +81,14 @@ namespace LogServiceClient.Runtime.WebRequests {
 
         public async UniTask<LogServiceRequestResult> PostEvents(string reportId, List<LogEventEntity> entities, 
             CancellationToken cancellation) {
+
+            if (string.IsNullOrWhiteSpace(reportId)) {
+                ExceptionsHelper.ThrowArgumentException();
+            }
+
+            if (entities.Count == 0) {
+                ExceptionsHelper.ThrowArgumentException();
+            }
 
             _jsonMapBuffer.Clear();
             _jsonMapBuffer["entities"] = entities;

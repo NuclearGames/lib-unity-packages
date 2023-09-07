@@ -11,20 +11,32 @@ namespace LogServiceClient.Runtime.Validation {
             options.DeviceOptions.OperatingSystemFamily = Trunc(options.DeviceOptions.OperatingSystemFamily, options.ValidationOptions.DeviceOperatingSystemFamilyMaxLength);
             options.DeviceOptions.ProcessorType = Trunc(options.DeviceOptions.ProcessorType, options.ValidationOptions.DeviceProcessorTypeMaxLength);
 
-            if (string.IsNullOrEmpty(options.DeviceId)) {
+            if (string.IsNullOrWhiteSpace(options.ServiceAddress)) {
+                ExceptionsHelper.ThrowArgumentException("Service Address not provided");
+            }
+
+            if (string.IsNullOrWhiteSpace(options.DbId)) {
+                ExceptionsHelper.ThrowArgumentException("Db Id not provided");
+            }
+
+            if (string.IsNullOrWhiteSpace(options.DeviceId)) {
                 ExceptionsHelper.ThrowArgumentException("Device Id not provided");
             }
 
-            if (string.IsNullOrEmpty(options.DeviceOptions.Model)) {
+            if (string.IsNullOrWhiteSpace(options.DeviceOptions.Model)) {
                 ExceptionsHelper.ThrowArgumentException("Device Model not provided");
             }
 
-            if (string.IsNullOrEmpty(options.DeviceOptions.Name)) {
+            if (string.IsNullOrWhiteSpace(options.DeviceOptions.Name)) {
                 ExceptionsHelper.ThrowArgumentException("Device Name not provided");
             }
 
-            if (string.IsNullOrEmpty(options.DeviceOptions.OperatingSystem)) {
+            if (string.IsNullOrWhiteSpace(options.DeviceOptions.OperatingSystem)) {
                 ExceptionsHelper.ThrowArgumentException("Device OperatingSystem not provided");
+            }
+
+            if (options.LogIdProvider == null) {
+                ExceptionsHelper.ThrowArgumentException("LogIdProvider not provided");
             }
         }
 
