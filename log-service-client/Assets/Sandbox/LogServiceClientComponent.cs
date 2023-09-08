@@ -11,7 +11,7 @@ namespace Sandbox {
                 ValidationOptions = new LogServiceClientValidationOptions(),
 
                 ServiceAddress = "http://127.0.0.1:5188",
-                DbId = "warplane_inc_online",
+                DbId = "warplane_inc_offline",
 
                 DeviceId = SystemInfo.deviceUniqueIdentifier,
                 DeviceOptions = new LogServiceClientDeviceOptions() {
@@ -21,6 +21,8 @@ namespace Sandbox {
                     OperatingSystemFamily = SystemInfo.operatingSystemFamily.ToString(),
                     ProcessorType = SystemInfo.processorType,
                 },
+
+                StackTraceDeep = 2,
 
                 //LogIdProvider = new ConditionLogIdProvider()
                 LogIdProvider = new StackTraceLogIdProvider()

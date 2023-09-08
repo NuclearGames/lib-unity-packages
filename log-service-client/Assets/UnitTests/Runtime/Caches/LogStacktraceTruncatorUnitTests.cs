@@ -22,42 +22,16 @@ namespace UnitTests.Runtime.Caches {
         private static readonly object[] Truncate_ReturnsExpectedString_Cases = new object[] { 
             new object[] { 
                 1,
-                @"UnityEngine.Debug:Log (object)
-Google.Logger:Log (string,Google.LogLevel)
-Google.EditorMeasurement/<Report>c__AnonStorey3:<>m__6 ()
-Google.EditorMeasurement:PromptToEnable (System.Action)
-Google.EditorMeasurement:Report (string,string)
-Google.VersionHandlerImpl/<NotifyWhenCompliationComplete>c__AnonStoreyA:<>m__17 ()
-Google.RunOnMainThread:ExecutePollingJobs ()
-Google.RunOnMainThread:<ExecuteAllUnnested>m__12 ()
-Google.RunOnMainThread:RunAction (System.Action)
-Google.RunOnMainThread:ExecuteAllUnnested (bool)
-Google.RunOnMainThread:ExecuteAll ()
-UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()",
+                "UnityEngine.Debug:Log (object)\nGoogle.Logger:Log (string,Google.LogLevel)\nGoogle.EditorMeasurement/<Report>c__AnonStorey3:<>m__6 ()\nGoogle.EditorMeasurement:PromptToEnable (System.Action)\nGoogle.EditorMeasurement:Report (string,string)\nGoogle.VersionHandlerImpl/<NotifyWhenCompliationComplete>c__AnonStoreyA:<>m__17 ()\nGoogle.RunOnMainThread:ExecutePollingJobs ()\nGoogle.RunOnMainThread:<ExecuteAllUnnested>m__12 ()",
 
                 @"UnityEngine.Debug:Log (object)"
             },
 
             new object[] {
                 5,
-                @"UnityEngine.Debug:Log (object)
-Google.Logger:Log (string,Google.LogLevel)
-Google.EditorMeasurement/<Report>c__AnonStorey3:<>m__6 ()
-Google.EditorMeasurement:PromptToEnable (System.Action)
-Google.EditorMeasurement:Report (string,string)
-Google.VersionHandlerImpl/<NotifyWhenCompliationComplete>c__AnonStoreyA:<>m__17 ()
-Google.RunOnMainThread:ExecutePollingJobs ()
-Google.RunOnMainThread:<ExecuteAllUnnested>m__12 ()
-Google.RunOnMainThread:RunAction (System.Action)
-Google.RunOnMainThread:ExecuteAllUnnested (bool)
-Google.RunOnMainThread:ExecuteAll ()
-UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()",
+                "UnityEngine.Debug:Log (object)\nGoogle.Logger:Log (string,Google.LogLevel)\nGoogle.EditorMeasurement/<Report>c__AnonStorey3:<>m__6 ()\nGoogle.EditorMeasurement:PromptToEnable (System.Action)\nGoogle.EditorMeasurement:Report (string,string)\nGoogle.VersionHandlerImpl/<NotifyWhenCompliationComplete>c__AnonStoreyA:<>m__17 ()\nGoogle.RunOnMainThread:ExecutePollingJobs ()\nGoogle.RunOnMainThread:<ExecuteAllUnnested>m__12 ()",
 
-                @"UnityEngine.Debug:Log (object)
-Google.Logger:Log (string,Google.LogLevel)
-Google.EditorMeasurement/<Report>c__AnonStorey3:<>m__6 ()
-Google.EditorMeasurement:PromptToEnable (System.Action)
-Google.EditorMeasurement:Report (string,string)"
+                "UnityEngine.Debug:Log (object)\nGoogle.Logger:Log (string,Google.LogLevel)\nGoogle.EditorMeasurement/<Report>c__AnonStorey3:<>m__6 ()\nGoogle.EditorMeasurement:PromptToEnable (System.Action)\nGoogle.EditorMeasurement:Report (string,string)"
             },
 
             new object[] {
@@ -68,11 +42,16 @@ Google.EditorMeasurement:Report (string,string)"
 
             new object[] {
                 5,
-                @"UnityEngine.Debug:Log (object)
-Google.Logger:Log (string,Google.LogLevel)",
+                "UnityEngine.Debug:Log (object)\nGoogle.Logger:Log (string,Google.LogLevel)",
 
-                @"UnityEngine.Debug:Log (object)
-Google.Logger:Log (string,Google.LogLevel)"
+                "UnityEngine.Debug:Log (object)\nGoogle.Logger:Log (string,Google.LogLevel)"
+            },
+
+            new object[]{ 
+                2,
+                "UnityEngine.Debug:LogError (object)\nSandbox.TestLogGenerator/<LogSequence>d__6:MoveNext () (at Assets/Sandbox/TestLogGenerator.cs:38)\nSystem.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Sandbox.TestLogGenerator/<LogSequence>d__6> (Sandbox.TestLogGenerator/<LogSequence>d__6&)\nSandbox.TestLogGenerator:LogSequence ()",
+
+                "UnityEngine.Debug:LogError (object)\nSandbox.TestLogGenerator/<LogSequence>d__6:MoveNext () (at Assets/Sandbox/TestLogGenerator.cs:38)"
             }
         };
     }

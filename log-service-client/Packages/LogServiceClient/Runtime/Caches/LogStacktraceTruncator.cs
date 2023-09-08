@@ -13,7 +13,7 @@ namespace LogServiceClient.Runtime.Caches {
             int lineEndingIndex = -1;
 
             for (int i = 0; i < _options.StackTraceDeep; i++) {             
-                int nextIndex = src.IndexOf(Environment.NewLine, lineEndingIndex + 1);
+                int nextIndex = src.IndexOf('\n', lineEndingIndex + 1);
 
                 lineEndingIndex = nextIndex;
 
