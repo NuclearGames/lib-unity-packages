@@ -16,11 +16,11 @@ namespace LogServiceClient.Runtime.RequestMachine.States {
             var result = await Machine.Context.Requester.GetSession(cancellation);
 
             if (!result.Request.Succeed) {
-                return Exit();
+                return await Retry(cancellation);
             }
 
             if (LogServiceResultCodes.GetSession.Internal.Check(result.Request.HttpCode, result.Request.ErrorCode)) {
-                return await Retry(cancellation);
+                return Exit();
             }
 
             if (LogServiceResultCodes.GetSession.NotFound.Check(result.Request.HttpCode, result.Request.ErrorCode)) {
