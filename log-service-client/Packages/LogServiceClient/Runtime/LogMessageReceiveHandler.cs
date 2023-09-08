@@ -13,6 +13,8 @@ namespace LogServiceClient.Runtime {
         private readonly ILogMapper<ReceiveLogEntry, SendLogEntry> _mapper;
         private readonly ILogErrorCache _errorCache;
         private readonly ILogIdProvider _logIdProvider;
+        private readonly ILogStringFormatter _stringFormatter;
+        private readonly ILogStacktraceTruncator _stacktraceTruncator;
 
         public LogMessageReceiveHandler(
             LogServiceClientOptions options,
@@ -20,7 +22,9 @@ namespace LogServiceClient.Runtime {
             ISendLogBuffer sendBuffer,
             ILogMapper<ReceiveLogEntry, SendLogEntry> mapper,
             ILogErrorCache errorCache,
-            ILogIdProvider logIdProvider) {
+            ILogIdProvider logIdProvider,
+            ILogStringFormatter stringFormatter,
+            ILogStacktraceTruncator stacktraceTrucator) {
 
             _options = options;
             _receiveBuffer = receiveBuffer;
@@ -28,6 +32,8 @@ namespace LogServiceClient.Runtime {
             _mapper = mapper;
             _errorCache = errorCache;
             _logIdProvider = logIdProvider;
+            _stringFormatter = stringFormatter;
+            _stacktraceTruncator = stacktraceTrucator;
 
             Application.logMessageReceived += OnLogMessageReceived;
         }
@@ -41,12 +47,14 @@ namespace LogServiceClient.Runtime {
                 return;
             }
 
+            string storedCondition = _stringFormatter.Format(condition);
+
             string storedStackTrace = _options.CaptureStackTrace
-                ? stackTrace
+                ? _stringFormatter.Format(_stacktraceTruncator.Truncate(stackTrace))
                 : null;
 
             _receiveBuffer
-                .StoreEntry(condition, storedStackTrace, type, new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds());
+                .StoreEntry(storedCondition, storedStackTrace, type, new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds());
 
             if (_options.StartSendLogTypes.HasType(type)) {
                 string id = _logIdProvider.Get(condition, stackTrace);

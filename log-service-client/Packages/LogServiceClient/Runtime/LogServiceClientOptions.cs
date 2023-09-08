@@ -60,6 +60,12 @@ namespace LogServiceClient.Runtime {
         /// </summary>
         public LogTypeFlags StartSendLogTypes { get; set; } = LogTypeFlags.Error | LogTypeFlags.Assert | LogTypeFlags.Exception;
 
+        /// <summary>
+        /// Глубина стактрейса.
+        /// Все, что не влезло, выбрасывается.
+        /// </summary>
+        public int StackTraceDeep { get; set; } = 10;
+
 
         /// <summary>
         /// Максимальное число логов, которое может быть отправлено за один запрос.
