@@ -24,11 +24,11 @@ namespace LogServiceClient.Runtime.RequestMachine.States {
                 _events, cancellation);
 
             if (!result.Succeed) {
-                return Exit();
+                return await Retry(cancellation);
             }
 
             if (LogServiceResultCodes.PostEvents.Internal.Check(result.HttpCode, result.ErrorCode)) {
-                return await Retry(cancellation);
+                return Exit();
             }
 
             if (LogServiceResultCodes.PostEvents.NotFound.Check(result.HttpCode, result.ErrorCode)) {

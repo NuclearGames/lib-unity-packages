@@ -31,7 +31,7 @@ namespace UnitTests.Runtime.RequestMachine.States {
         }
 
         [Test]
-        public void ExecuteAsync_ReturnsExit_WhenWebRequestFailedAndMaxAttemptsNotReached() {
+        public void ExecuteAsync_ReturnsRetry_WhenWebRequestFailedAndMaxAttemptsNotReached() {
             AsyncTest.Run(async () => {
                 // Arrange.
                 var fixture = new LogRequestPostEventsUnitTestsFixture()
@@ -43,12 +43,12 @@ namespace UnitTests.Runtime.RequestMachine.States {
                 var result = await fixture.Unit.ExecuteAsync(default);
 
                 // Assert.
-                fixture.AssertReturnsExit(result);
+                await fixture.AssertReturnsRetry(result, LogRequestStateIndex.PostEvents);
             });
         }
 
         [Test]
-        public void ExecuteAsync_ReturnsRetry_WhenInternalErrorAndMaxAttemptsNotReached() {
+        public void ExecuteAsync_ReturnsExit_WhenInternalErrorAndMaxAttemptsNotReached() {
             AsyncTest.Run(async () => {
                 // Arrange.
                 var fixture = new LogRequestPostEventsUnitTestsFixture()
@@ -62,7 +62,7 @@ namespace UnitTests.Runtime.RequestMachine.States {
                 var result = await fixture.Unit.ExecuteAsync(default);
 
                 // Assert.
-                await fixture.AssertReturnsRetry(result, LogRequestStateIndex.PostEvents);
+                fixture.AssertReturnsExit(result);
             });
         }
 

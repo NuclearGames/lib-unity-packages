@@ -27,6 +27,9 @@ namespace LogServiceClient.Runtime {
 
         private readonly ILogIdProvider _logIdProvider;
 
+        private readonly LogStringFormatter _stringFormatter;
+        private readonly LogStacktraceTruncator _stacktraceTruncator;
+
         private readonly ReceiveLogEntryToSendLogEntryMapper _receiveLogEntryToSendLogEntryMapper;
         private readonly SendLogEntryToLogEventEntityMapper _sendLogEntryToLogEventEntityMapper;
         private readonly LogServiceClientDeviceOptionsToLogDeviceInfoEntityMapper _logServiceClientDeviceOptionsToLogDeviceInfoEntityMapper;
@@ -56,12 +59,17 @@ namespace LogServiceClient.Runtime {
 
             _logIdProvider = options.LogIdProvider;
 
+            _stringFormatter = new LogStringFormatter();
+            _stacktraceTruncator = new LogStacktraceTruncator(_options);
+
             _logMessageReceiveHandler = new LogMessageReceiveHandler(
                 _options,
                 _receiveBuffer, _sendBuffer,
                 _receiveLogEntryToSendLogEntryMapper,
                 _logErrorCache,
-                _logIdProvider);
+                _logIdProvider,
+                _stringFormatter,
+                _stacktraceTruncator);
 
             _context = new LogRequestMachineContext(
                 _requester,

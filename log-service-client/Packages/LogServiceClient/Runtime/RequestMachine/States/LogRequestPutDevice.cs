@@ -16,11 +16,11 @@ namespace LogServiceClient.Runtime.RequestMachine.States {
             var result = await Machine.Context.Requester.PutDevice(cancellation);
 
             if (!result.Succeed) {
-                return Exit();
+                return await Retry(cancellation);
             }
 
             if(LogServiceResultCodes.PutDevice.Internal.Check(result.HttpCode, result.ErrorCode)) {
-                return await Retry(cancellation);
+                return Exit();
             }
 
             if (LogServiceResultCodes.PutDevice.NotFound.Check(result.HttpCode, result.ErrorCode)) {
