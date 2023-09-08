@@ -11,7 +11,9 @@
       "version": "file:LogServiceClient",
       "depth": 0,
       "source": "embedded",
-      "dependencies": {}
+      "dependencies": {
+        "com.cysharp.unitask": "2.3.2"
+      }
     },
     "com.unity.2d.animation": {
       "version": "5.2.4",
