@@ -125,7 +125,7 @@ namespace UnitTests.Runtime.RequestMachine.States {
                 var result = await fixture.Unit.ExecuteAsync(default);
 
                 // Assert.
-                fixture.AssertReturnsMoveTo(result, LogRequestStateIndex.GetReport);
+                fixture.AssertReturnsMoveTo(result, LogRequestStateIndex.PostReport);
                 Assert.That(fixture.Machine.Variables.SessionId, Is.EqualTo("SessionIdHere"));
             });
         }

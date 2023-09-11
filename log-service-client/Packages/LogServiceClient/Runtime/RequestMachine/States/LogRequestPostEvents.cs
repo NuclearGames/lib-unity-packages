@@ -33,7 +33,7 @@ namespace LogServiceClient.Runtime.RequestMachine.States {
 
             if (LogServiceResultCodes.PostEvents.NotFound.Check(result.HttpCode, result.ErrorCode)) {
                 if (result.ErrorCode == LogServiceResultCodes.PostEvents.NotFound.REPORT_NOT_FOUND) {
-                    return MoveTo(LogRequestStateIndex.GetReport);
+                    return MoveTo(LogRequestStateIndex.PostReport);
                 }
 
                 ClearBuffer();

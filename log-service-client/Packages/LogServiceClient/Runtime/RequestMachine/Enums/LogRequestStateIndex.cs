@@ -3,7 +3,7 @@
         None = -1,
         PutDevice = 0,
         GetSession = 1,
-        GetReport = 2,
+        PostReport = 2,
         PostEvents = 3
     }
 }

@@ -9,7 +9,7 @@ namespace LogServiceClient.Runtime.RequestMachine.Factories {
             ILogRequestState instance = state switch {
                 LogRequestStateIndex.PutDevice => new LogRequestPutDevice(machine),
                 LogRequestStateIndex.GetSession => new LogRequestGetSession(machine),
-                LogRequestStateIndex.GetReport => new LogRequestGetReport(machine),
+                LogRequestStateIndex.PostReport => new LogRequestPostReport(machine),
                 LogRequestStateIndex.PostEvents => new LogRequestPostEvents(machine),
                 _ => null
             };

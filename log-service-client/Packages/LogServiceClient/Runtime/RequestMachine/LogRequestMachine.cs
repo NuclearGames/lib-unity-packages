@@ -28,7 +28,7 @@ namespace LogServiceClient.Runtime.RequestMachine {
             _states = new ILogRequestState[] { 
                 stateFactory.Create(LogRequestStateIndex.PutDevice, this),
                 stateFactory.Create(LogRequestStateIndex.GetSession, this),
-                stateFactory.Create(LogRequestStateIndex.GetReport, this),
+                stateFactory.Create(LogRequestStateIndex.PostReport, this),
                 stateFactory.Create(LogRequestStateIndex.PostEvents, this)
             };
         }
@@ -41,7 +41,7 @@ namespace LogServiceClient.Runtime.RequestMachine {
 
             StateIndex = string.IsNullOrEmpty(Variables.SessionId)
               ? LogRequestStateIndex.GetSession
-              : LogRequestStateIndex.GetReport;
+              : LogRequestStateIndex.PostReport;
 
             //Debug.Log($"[LogRequestMachine] Initial State: {StateIndex}");
 

@@ -1,5 +1,5 @@
 ﻿namespace LogServiceClient.Runtime.WebRequests.Utils {
-    public struct LogServiceGetReportResult {
+    public struct LogServicePostReportResult {
         public LogServiceRequestResult Request;
         public string ReportId;
     }
