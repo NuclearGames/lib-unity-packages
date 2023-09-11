@@ -32,7 +32,7 @@ namespace LogServiceClient.Runtime.RequestMachine.States {
 
             if (LogServiceResultCodes.GetSession.Created.Check(result.Request.HttpCode, result.Request.ErrorCode)) {
                 Machine.Variables.SessionId = result.SessionId;
-                return MoveTo(LogRequestStateIndex.GetReport);
+                return MoveTo(LogRequestStateIndex.PostReport);
             }
 
             return Exit();

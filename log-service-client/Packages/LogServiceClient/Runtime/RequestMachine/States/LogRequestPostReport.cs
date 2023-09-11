@@ -6,14 +6,14 @@ using LogServiceClient.Runtime.RequestMachine.Utils;
 using System.Threading;
 
 namespace LogServiceClient.Runtime.RequestMachine.States {
-    public sealed class LogRequestGetReport : LogRequestBaseState {
-        protected override LogRequestStateIndex Index => LogRequestStateIndex.GetReport;
+    public sealed class LogRequestPostReport : LogRequestBaseState {
+        protected override LogRequestStateIndex Index => LogRequestStateIndex.PostReport;
 
-        public LogRequestGetReport(ILogRequestMachineInternal machine) : base(machine) {
+        public LogRequestPostReport(ILogRequestMachineInternal machine) : base(machine) {
         }
 
         public async override UniTask<LogRequestStateResult> ExecuteAsync(CancellationToken cancellation) {
-            var result = await Machine.Context.Requester.GetReport(Machine.Variables.SessionId, cancellation);
+            var result = await Machine.Context.Requester.PostReport(Machine.Variables.SessionId, cancellation);
 
             if (!result.Request.Succeed) {
                 return await Retry(cancellation);

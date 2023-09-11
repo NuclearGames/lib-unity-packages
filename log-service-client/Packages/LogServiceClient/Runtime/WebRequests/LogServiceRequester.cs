@@ -1,6 +1,7 @@
 ﻿using Cysharp.Threading.Tasks;
 using LogServiceClient.Runtime.Constants;
 using LogServiceClient.Runtime.Exceptions;
+using LogServiceClient.Runtime.External.Interfaces;
 using LogServiceClient.Runtime.Mappers.Interfaces;
 using LogServiceClient.Runtime.WebRequests.Interfaces;
 using LogServiceClient.Runtime.WebRequests.Utils;
@@ -16,6 +17,7 @@ namespace LogServiceClient.Runtime.WebRequests {
     public sealed class LogServiceRequester : ILogServiceRequester {
         private readonly LogServiceClientOptions _options;
         private readonly ILogMapper<LogServiceClientDeviceOptions, LogDeviceInfoEntity> _mapper;
+        private readonly IUserSettingsProvider _userSettingsProvider;
 
         private readonly JsonSerializerSettings _jsonSettings = new JsonSerializerSettings {
             DateFormatHandling = DateFormatHandling.IsoDateFormat,
@@ -33,6 +35,7 @@ namespace LogServiceClient.Runtime.WebRequests {
 
             _options = options;
             _mapper = mapper;
+            _userSettingsProvider = options.UserSettingsProvider;
         }
 
         public async UniTask<LogServiceRequestResult> PutDevice(CancellationToken cancellation) {
@@ -62,18 +65,22 @@ namespace LogServiceClient.Runtime.WebRequests {
             };
         }
 
-        public async UniTask<LogServiceGetReportResult> GetReport(string sessionId, CancellationToken cancellation) {
+        public async UniTask<LogServicePostReportResult> PostReport(string sessionId, CancellationToken cancellation) {
             if(string.IsNullOrWhiteSpace(sessionId)) {
                 ExceptionsHelper.ThrowArgumentException();
             }
 
-            UnityWebRequest www = UnityWebRequest.Get($"{_options.ServiceAddress}/report_id/db/{_options.DbId}/session_id/{sessionId}");
+            _jsonMapBuffer.Clear();
+            _jsonMapBuffer["userSettings"] = _userSettingsProvider.Get();
+            string dataJson = JsonConvert.SerializeObject(_jsonMapBuffer, _jsonSettings);
+
+            UnityWebRequest www = CreatePostRequest($"{_options.ServiceAddress}/report_id/db/{_options.DbId}/session_id/{sessionId}", dataJson);
 
             var (result, json) = await PerformRequest(www, cancellation);
 
             string reportId = json?.Value<string>("reportId");
 
-            return new LogServiceGetReportResult() { 
+            return new LogServicePostReportResult() { 
                 Request = result,
                 ReportId = reportId
             };

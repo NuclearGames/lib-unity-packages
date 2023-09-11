@@ -1,6 +1,7 @@
 ﻿using LogServiceClient.Runtime.Caches;
 using LogServiceClient.Runtime.Caches.Interfaces;
 using LogServiceClient.Runtime.Enums;
+using LogServiceClient.Runtime.External.Interfaces;
 
 namespace LogServiceClient.Runtime {
     public sealed class LogServiceClientOptions {
@@ -44,6 +45,11 @@ namespace LogServiceClient.Runtime {
         /// </summary>
         public ILogIdProvider LogIdProvider { get; set; }
 
+        /// <summary>
+        /// Объект, предоставляющий инфу о настройках.
+        /// <para>Должен быть реализован.</para>
+        /// </summary>
+        public IUserSettingsProvider UserSettingsProvider { get; set; }
 
         /// <summary>
         /// Нужно ли собирать стактрейсы.
