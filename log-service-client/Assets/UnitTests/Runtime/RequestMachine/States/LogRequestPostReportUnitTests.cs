@@ -8,7 +8,7 @@ using NUnit.Framework;
 using System.Threading;
 
 namespace UnitTests.Runtime.RequestMachine.States {
-    internal class LogRequestGetReportUnitTests {
+    internal class LogRequestPostReportUnitTests {
         [Test]
         public void ExecuteAsync_ReturnsExit_WhenWebRequestFailedAndMaxAttemptsReached() {
             AsyncTest.Run(async () => {
