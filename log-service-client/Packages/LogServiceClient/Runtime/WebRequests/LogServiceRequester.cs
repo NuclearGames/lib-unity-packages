@@ -74,7 +74,7 @@ namespace LogServiceClient.Runtime.WebRequests {
             _jsonMapBuffer["userSettings"] = _userSettingsProvider.Get();
             string dataJson = JsonConvert.SerializeObject(_jsonMapBuffer, _jsonSettings);
 
-            UnityWebRequest www = CreatePostRequest($"{_options.ServiceAddress}/report_id/db/{_options.DbId}/session_id/{sessionId}", dataJson);
+            UnityWebRequest www = CreatePostRequest($"{_options.ServiceAddress}/report_info/db/{_options.DbId}/session_id/{sessionId}", dataJson);
 
             var (result, json) = await PerformRequest(www, cancellation);
 
