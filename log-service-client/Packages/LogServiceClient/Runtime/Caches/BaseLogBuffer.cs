@@ -1,9 +1,9 @@
-﻿using Codice.Client.BaseCommands;
-using LogServiceClient.Runtime.Caches.Interfaces;
+﻿using LogServiceClient.Runtime.Caches.Interfaces;
 using LogServiceClient.Runtime.Caches.Utils;
 using LogServiceClient.Runtime.Exceptions;
 using LogServiceClient.Runtime.Mappers.Interfaces;
 using LogServiceClient.Runtime.Pools.Interfaces;
+
 
 namespace LogServiceClient.Runtime {
     public abstract class BaseLogBuffer<T> : ILogBuffer<T> where T : BaseLogEntry<T> {
