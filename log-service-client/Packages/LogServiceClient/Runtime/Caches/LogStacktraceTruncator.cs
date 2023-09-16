@@ -1,5 +1,5 @@
 ﻿using LogServiceClient.Runtime.Caches.Interfaces;
-using System;
+
 
 namespace LogServiceClient.Runtime.Caches {
     public sealed class LogStacktraceTruncator : ILogStacktraceTruncator {

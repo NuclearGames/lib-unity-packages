@@ -1,6 +1,6 @@
 ﻿using LogServiceClient.Runtime.Mappers.Interfaces;
 using LogServiceClient.Runtime.WebRequests.Utils;
-using System;
+
 
 namespace LogServiceClient.Runtime.Mappers {
     public sealed class LogServiceClientDeviceOptionsToLogDeviceInfoEntityMapper : ILogMapper<LogServiceClientDeviceOptions, LogDeviceInfoEntity> {
