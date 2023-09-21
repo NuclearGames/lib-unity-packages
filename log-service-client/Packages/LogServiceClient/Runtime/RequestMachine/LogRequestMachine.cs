@@ -4,6 +4,7 @@ using LogServiceClient.Runtime.RequestMachine.Interfaces;
 using LogServiceClient.Runtime.RequestMachine.Utils;
 using System;
 using System.Threading;
+using UnityEngine;
 
 namespace LogServiceClient.Runtime.RequestMachine {
     public sealed class LogRequestMachine : ILogRequestMachineInternal {
@@ -37,31 +38,41 @@ namespace LogServiceClient.Runtime.RequestMachine {
             IsRunning = true;
             Thread.MemoryBarrier();
 
-            //Debug.Log($"[LogRequestMachine] Started");
+            if (Options.DebugMode) {
+                Debug.Log($"[LogRequestMachine] Started");
+            }
 
             StateIndex = string.IsNullOrEmpty(Variables.SessionId)
               ? LogRequestStateIndex.GetSession
               : LogRequestStateIndex.PostReport;
 
-            //Debug.Log($"[LogRequestMachine] Initial State: {StateIndex}");
+            if (Options.DebugMode) {
+                Debug.Log($"[LogRequestMachine] Initial State: {StateIndex}");
+            }
 
             try {
 
                 while (StateIndex != LogRequestStateIndex.None) {
                     var result = await GetCurrentState().ExecuteAsync(cancellation);
                     StateIndex = result.Index;
-                    //Debug.Log($"[LogRequestMachine] MoveTo State: {StateIndex}");
+                    if (Options.DebugMode) {
+                        Debug.Log($"[LogRequestMachine] MoveTo State: {StateIndex}");
+                    }
                 }
 
-            } catch (Exception) { 
-
+            } catch (Exception ex) {
+                if (Options.DebugMode) {
+                    Debug.Log($"Error: {ex}");
+                }
             } finally {
 
                 StateIndex = LogRequestStateIndex.None;
                 ResetStates();
                 Context.SendBuffer.Clear();
 
-                //Debug.Log($"[LogRequestMachine] Finished");
+                if (Options.DebugMode) {
+                    Debug.Log($"[LogRequestMachine] Finished");
+                }
 
                 Thread.MemoryBarrier();
                 IsRunning = false;
