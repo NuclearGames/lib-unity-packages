@@ -18,6 +18,7 @@ namespace LogServiceClient.Runtime.WebRequests {
         private readonly LogServiceClientOptions _options;
         private readonly ILogMapper<LogServiceClientDeviceOptions, LogDeviceInfoEntity> _mapper;
         private readonly IUserSettingsProvider _userSettingsProvider;
+        private readonly IgnoreCertificateHandler _certificateHandler;
 
         private readonly JsonSerializerSettings _jsonSettings = new JsonSerializerSettings {
             DateFormatHandling = DateFormatHandling.IsoDateFormat,
@@ -36,6 +37,7 @@ namespace LogServiceClient.Runtime.WebRequests {
             _options = options;
             _mapper = mapper;
             _userSettingsProvider = options.UserSettingsProvider;
+            _certificateHandler = new IgnoreCertificateHandler();
         }
 
         public async UniTask<LogServiceRequestResult> PutDevice(CancellationToken cancellation) {
@@ -53,7 +55,7 @@ namespace LogServiceClient.Runtime.WebRequests {
         }
 
         public async UniTask<LogServiceGetSessionResult> GetSession(CancellationToken cancellation) {
-            UnityWebRequest www = UnityWebRequest.Get($"{_options.ServiceAddress}/session_id/db/{_options.DbId}/device_id/{_options.DeviceId}");
+            UnityWebRequest www = CreateGetRequest($"{_options.ServiceAddress}/session_id/db/{_options.DbId}/device_id/{_options.DeviceId}");
 
             var (result, json) = await PerformRequest(www, cancellation);
 
@@ -128,11 +130,18 @@ namespace LogServiceClient.Runtime.WebRequests {
             return (result, json);
         }
 
+        private UnityWebRequest CreateGetRequest(string url) {
+            UnityWebRequest www = UnityWebRequest.Get(url);
+            www.certificateHandler = _certificateHandler;
+            return www;
+        }
+
         private UnityWebRequest CreatePostRequest(string url, string dataJson) {
             UnityWebRequest www = UnityWebRequest.Put(url, dataJson);
 
             www.method = UnityWebRequest.kHttpVerbPOST;
             www.SetRequestHeader("Content-Type", "application/json");
+            www.certificateHandler = _certificateHandler;
 
             return www;
         }
@@ -141,6 +150,7 @@ namespace LogServiceClient.Runtime.WebRequests {
             UnityWebRequest www = UnityWebRequest.Put(url, dataJson);
 
             www.SetRequestHeader("Content-Type", "application/json");
+            www.certificateHandler = _certificateHandler;
 
             return www;
         }
