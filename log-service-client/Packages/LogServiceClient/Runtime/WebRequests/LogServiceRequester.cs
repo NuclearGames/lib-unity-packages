@@ -53,7 +53,7 @@ namespace LogServiceClient.Runtime.WebRequests {
         }
 
         public async UniTask<LogServiceGetSessionResult> GetSession(CancellationToken cancellation) {
-            UnityWebRequest www = UnityWebRequest.Get($"{_options.ServiceAddress}/session_id/db/{_options.DbId}/device_id/{_options.DeviceId}");
+            UnityWebRequest www = CreateGetRequest($"{_options.ServiceAddress}/session_id/db/{_options.DbId}/device_id/{_options.DeviceId}");
 
             var (result, json) = await PerformRequest(www, cancellation);
 
@@ -119,7 +119,9 @@ namespace LogServiceClient.Runtime.WebRequests {
             TryParseData(resultStringData, out var json);
             var errorCode = (LogServiceInternalResultCodes?)json?.Value<int>("errorCode");
 
-            //UnityEngine.Debug.Log($"[LogServiceRequester] ({www.uri}) {www.result}, {resultStringData}");
+            if (_options.DebugMode) {
+                UnityEngine.Debug.Log($"[LogServiceRequester] ({www.uri}) {www.result}, {resultStringData}");
+            }
 
             var result = succeed
                 ? LogServiceRequestResult.Successful(www.responseCode, errorCode)
@@ -128,11 +130,18 @@ namespace LogServiceClient.Runtime.WebRequests {
             return (result, json);
         }
 
+        private UnityWebRequest CreateGetRequest(string url) {
+            UnityWebRequest www = UnityWebRequest.Get(url);
+            www.certificateHandler = new IgnoreCertificateHandler();
+            return www;
+        }
+
         private UnityWebRequest CreatePostRequest(string url, string dataJson) {
             UnityWebRequest www = UnityWebRequest.Put(url, dataJson);
 
             www.method = UnityWebRequest.kHttpVerbPOST;
             www.SetRequestHeader("Content-Type", "application/json");
+            www.certificateHandler = new IgnoreCertificateHandler();
 
             return www;
         }
@@ -141,6 +150,7 @@ namespace LogServiceClient.Runtime.WebRequests {
             UnityWebRequest www = UnityWebRequest.Put(url, dataJson);
 
             www.SetRequestHeader("Content-Type", "application/json");
+            www.certificateHandler = new IgnoreCertificateHandler();
 
             return www;
         }

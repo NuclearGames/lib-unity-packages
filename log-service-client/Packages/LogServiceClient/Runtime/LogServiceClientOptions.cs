@@ -124,6 +124,10 @@ namespace LogServiceClient.Runtime {
         /// </summary>
         public int EventEntityPoolCapacity { get; set; } = 50;
 
+        /// <summary>
+        /// Выводить ли логи автомата.
+        /// </summary>
+        public bool DebugMode { get; set; } = false;
     }
 
     public sealed class LogServiceClientValidationOptions {

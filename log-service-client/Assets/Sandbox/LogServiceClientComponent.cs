@@ -1,5 +1,6 @@
 ﻿using LogServiceClient.Runtime;
 using LogServiceClient.Runtime.Caches;
+using LogServiceClient.Runtime.External.Interfaces;
 using UnityEngine;
 
 namespace Sandbox {
@@ -10,8 +11,8 @@ namespace Sandbox {
             _client = new LogServiceClientCore(new LogServiceClientOptions() { 
                 ValidationOptions = new LogServiceClientValidationOptions(),
 
-                ServiceAddress = "http://127.0.0.1:5188",
-                DbId = "warplane_inc_offline",
+                ServiceAddress = "https://warplane-inc-online.logservice.game-logs.online",
+                DbId = "warplane_inc_online",
 
                 DeviceId = SystemInfo.deviceUniqueIdentifier,
                 DeviceOptions = new LogServiceClientDeviceOptions() {
@@ -25,7 +26,9 @@ namespace Sandbox {
                 StackTraceDeep = 2,
 
                 //LogIdProvider = new ConditionLogIdProvider()
-                LogIdProvider = new StackTraceLogIdProvider()
+                LogIdProvider = new StackTraceLogIdProvider(),
+
+                UserSettingsProvider = new SettingsProvider()
             });
         }
 
@@ -41,6 +44,12 @@ namespace Sandbox {
             Debug.Log($"OperatingSystem: {SystemInfo.operatingSystem.Length} ({SystemInfo.operatingSystem})");
             Debug.Log($"OperatingSystemFamily: {SystemInfo.operatingSystemFamily.ToString().Length} ({SystemInfo.operatingSystemFamily.ToString()})");
             Debug.Log($"ProcessorType: {SystemInfo.processorType.Length} ({SystemInfo.processorType})");
+        }
+
+        private class SettingsProvider : IUserSettingsProvider {
+            public string Get() {
+                return "some settings...";
+            }
         }
     }
 }
