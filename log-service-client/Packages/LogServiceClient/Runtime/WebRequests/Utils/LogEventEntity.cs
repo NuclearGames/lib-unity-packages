@@ -8,19 +8,19 @@ namespace LogServiceClient.Runtime.WebRequests.Utils {
     [Serializable]
     public sealed class LogEventEntity : ILogPoolItem {
         [JsonProperty]
-        public int Index { get; set; }
-        
+        public int Index;
+
         [JsonProperty]
-        public long Time { get; set; }
-        
+        public long Time;
+
         [JsonProperty]
-        public short Type { get; set; }
-        
+        public short Type;
+
         [JsonProperty]
-        public string Message { get; set; }
-        
+        public string Message;
+
         [JsonProperty]
-        public string StackTrace { get; set; }
+        public string StackTrace;
 
         public void Reset() {
             Index = default;
