@@ -40,10 +40,6 @@ namespace LogServiceClient.Runtime.WebRequests {
         }
 
         public async UniTask<LogServiceRequestResult> PutDevice(CancellationToken cancellation) {
-            if (_options.DebugMode) {
-                Debug.Log($"[LogServiceRequester - Prepare]: DeviceOptions='{JsonConvert.SerializeObject(_options.DeviceOptions, _jsonSettings)}'");
-            }
-            
             _deviceInfoEntity = new LogDeviceInfoEntity();
             _mapper.Copy(_options.DeviceOptions, _deviceInfoEntity);
 
