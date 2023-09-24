@@ -28,7 +28,7 @@ namespace LogServiceClient.Runtime.WebRequests {
 
         private readonly Dictionary<string, object> _jsonMapBuffer = new Dictionary<string, object>();
 
-        // private LogDeviceInfoEntity _deviceInfoEntity;
+        private LogDeviceInfoEntity _deviceInfoEntity;
 
         public LogServiceRequester(
             LogServiceClientOptions options, 
@@ -44,11 +44,12 @@ namespace LogServiceClient.Runtime.WebRequests {
                 Debug.Log($"[LogServiceRequester - Prepare]: DeviceOptions='{JsonConvert.SerializeObject(_options.DeviceOptions, _jsonSettings)}'");
             }
             
-            var deviceInfoEntity = new LogDeviceInfoEntity();
-            _mapper.Copy(_options.DeviceOptions, deviceInfoEntity);
+            _deviceInfoEntity = new LogDeviceInfoEntity();
+            _mapper.Copy(_options.DeviceOptions, _deviceInfoEntity);
+            // var deviceInfoEntity = _mapper.Map(_options.DeviceOptions);
 
             string url = $"{_options.ServiceAddress}/device_id/db/{_options.DbId}/device_id/{_options.DeviceId}";
-            string dataJson = JsonConvert.SerializeObject(deviceInfoEntity, _jsonSettings);
+            string dataJson = JsonConvert.SerializeObject(_deviceInfoEntity, _jsonSettings);
             UnityWebRequest www = CreatePutRequest(url, dataJson);
 
             var (result, _) = await PerformRequest(www, cancellation);

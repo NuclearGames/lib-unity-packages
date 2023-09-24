@@ -11,5 +11,15 @@ namespace LogServiceClient.Runtime.Mappers {
             to.OperatingSystemFamily = from.OperatingSystemFamily;
             to.ProcessorType = from.ProcessorType;
         }
+
+        public LogDeviceInfoEntity Map(LogServiceClientDeviceOptions from) {
+            return new LogDeviceInfoEntity {
+                Model = from.Model,
+                Name = from.Name,
+                OperatingSystem = from.OperatingSystem,
+                OperatingSystemFamily = from.OperatingSystemFamily,
+                ProcessorType = from.ProcessorType
+            };
+        }
     }
 }

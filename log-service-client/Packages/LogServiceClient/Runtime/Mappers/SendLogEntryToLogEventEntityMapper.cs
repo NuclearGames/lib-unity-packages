@@ -13,6 +13,10 @@ namespace LogServiceClient.Runtime.Mappers {
             to.Time = from.Time;
         }
 
+        public LogEventEntity Map(SendLogEntry from) {
+            throw new System.NotImplementedException();
+        }
+
         private short MapType(LogType type) {
             return type switch {
                 LogType.Error => 0,
