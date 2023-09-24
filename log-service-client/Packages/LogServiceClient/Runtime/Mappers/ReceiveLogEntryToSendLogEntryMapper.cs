@@ -9,5 +9,9 @@ namespace LogServiceClient.Runtime.Mappers {
             to.Type = from.Type;
             to.Time = from.Time;
         }
+
+        public SendLogEntry Map(ReceiveLogEntry from) {
+            throw new System.NotImplementedException();
+        }
     }
 }
