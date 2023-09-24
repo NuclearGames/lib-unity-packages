@@ -1,22 +1,24 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+using Newtonsoft.Json;
 
 
 namespace LogServiceClient.Runtime.WebRequests.Utils {
+    [Serializable]
     public sealed class LogDeviceInfoEntity {
-        
+
         [JsonProperty]
-        public string Model { get; set; }
-        
+        public string Model;
+
         [JsonProperty]
-        public string Name { get; set; }
-        
+        public string Name;
+
         [JsonProperty]
-        public string OperatingSystem { get; set; }
-        
+        public string OperatingSystem;
+
         [JsonProperty]
-        public string OperatingSystemFamily { get; set; }
-        
+        public string OperatingSystemFamily;
+
         [JsonProperty]
-        public string ProcessorType { get; set; }
+        public string ProcessorType;
     }
 }
