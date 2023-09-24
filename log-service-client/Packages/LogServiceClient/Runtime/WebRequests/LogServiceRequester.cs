@@ -11,6 +11,7 @@ using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using UnityEngine;
 using UnityEngine.Networking;
 
 namespace LogServiceClient.Runtime.WebRequests {
@@ -39,13 +40,16 @@ namespace LogServiceClient.Runtime.WebRequests {
         }
 
         public async UniTask<LogServiceRequestResult> PutDevice(CancellationToken cancellation) {
+            if (_options.DebugMode) {
+                Debug.Log($"[LogServiceRequester - Prepare]: DeviceOptions='{JsonConvert.SerializeObject(_options.DeviceOptions, _jsonSettings)}'");
+            }
+            
             _deviceInfoEntity ??= new LogDeviceInfoEntity();
             _mapper.Copy(_options.DeviceOptions, _deviceInfoEntity);
 
+            string url = $"{_options.ServiceAddress}/device_id/db/{_options.DbId}/device_id/{_options.DeviceId}";
             string dataJson = JsonConvert.SerializeObject(_deviceInfoEntity, _jsonSettings);
-
-            UnityWebRequest www = CreatePutRequest($"{_options.ServiceAddress}/device_id/db/{_options.DbId}/device_id/{_options.DeviceId}",
-                dataJson);
+            UnityWebRequest www = CreatePutRequest(url, dataJson);
 
             var (result, _) = await PerformRequest(www, cancellation);
 
@@ -53,7 +57,8 @@ namespace LogServiceClient.Runtime.WebRequests {
         }
 
         public async UniTask<LogServiceGetSessionResult> GetSession(CancellationToken cancellation) {
-            UnityWebRequest www = CreateGetRequest($"{_options.ServiceAddress}/session_id/db/{_options.DbId}/device_id/{_options.DeviceId}");
+            string url = $"{_options.ServiceAddress}/session_id/db/{_options.DbId}/device_id/{_options.DeviceId}";
+            UnityWebRequest www = CreateGetRequest(url);
 
             var (result, json) = await PerformRequest(www, cancellation);
 
@@ -70,11 +75,13 @@ namespace LogServiceClient.Runtime.WebRequests {
                 ExceptionsHelper.ThrowArgumentException();
             }
 
+            string url = $"{_options.ServiceAddress}/report_info/db/{_options.DbId}/session_id/{sessionId}";
+
             _jsonMapBuffer.Clear();
             _jsonMapBuffer["userSettings"] = _userSettingsProvider.Get();
             string dataJson = JsonConvert.SerializeObject(_jsonMapBuffer, _jsonSettings);
-
-            UnityWebRequest www = CreatePostRequest($"{_options.ServiceAddress}/report_info/db/{_options.DbId}/session_id/{sessionId}", dataJson);
+            
+            UnityWebRequest www = CreatePostRequest(url, dataJson);
 
             var (result, json) = await PerformRequest(www, cancellation);
 
@@ -96,11 +103,11 @@ namespace LogServiceClient.Runtime.WebRequests {
             if (entities.Count == 0) {
                 ExceptionsHelper.ThrowArgumentException();
             }
-
+            
             _jsonMapBuffer.Clear();
             _jsonMapBuffer["entities"] = entities;
             string dataJson = JsonConvert.SerializeObject(_jsonMapBuffer, _jsonSettings);
-    
+            
             UnityWebRequest www = CreatePostRequest($"{_options.ServiceAddress}/events/db/{_options.DbId}/report_id/{reportId}", dataJson);
 
             var (result, _) = await PerformRequest(www, cancellation);
@@ -120,7 +127,7 @@ namespace LogServiceClient.Runtime.WebRequests {
             var errorCode = (LogServiceInternalResultCodes?)json?.Value<int>("errorCode");
 
             if (_options.DebugMode) {
-                UnityEngine.Debug.Log($"[LogServiceRequester] ({www.uri}) {www.result}, {resultStringData}");
+                UnityEngine.Debug.Log($"[LogServiceRequester - Response]: ({www.uri}) {www.result}, {resultStringData}");
             }
 
             var result = succeed
@@ -131,12 +138,20 @@ namespace LogServiceClient.Runtime.WebRequests {
         }
 
         private UnityWebRequest CreateGetRequest(string url) {
+            if (_options.DebugMode) {
+                Debug.Log($"[LogServiceRequester - Request]: ({url}) '' ");
+            }
+            
             UnityWebRequest www = UnityWebRequest.Get(url);
             www.certificateHandler = new IgnoreCertificateHandler();
             return www;
         }
 
         private UnityWebRequest CreatePostRequest(string url, string dataJson) {
+            if (_options.DebugMode) {
+                Debug.Log($"[LogServiceRequester - Request]: ({url}) '{dataJson}' ");
+            }
+            
             UnityWebRequest www = UnityWebRequest.Put(url, dataJson);
 
             www.method = UnityWebRequest.kHttpVerbPOST;
@@ -147,6 +162,10 @@ namespace LogServiceClient.Runtime.WebRequests {
         }
 
         private UnityWebRequest CreatePutRequest(string url, string dataJson) {
+            if (_options.DebugMode) {
+                Debug.Log($"[LogServiceRequester - Request]: ({url}) '{dataJson}' ");
+            }
+            
             UnityWebRequest www = UnityWebRequest.Put(url, dataJson);
 
             www.SetRequestHeader("Content-Type", "application/json");
