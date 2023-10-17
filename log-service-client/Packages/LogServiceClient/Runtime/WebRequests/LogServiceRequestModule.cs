@@ -45,7 +45,7 @@ namespace LogServiceClient.Runtime.WebRequests {
             _deviceInfoEntity = new LogDeviceInfoEntity();
             _mapper.Copy(_options.DeviceOptions, _deviceInfoEntity);
 
-            string url = $"{_options.ServiceAddress}/device_id/db/{_options.DbId}/device_id/{_options.DeviceId}";
+            string url = $"{_options.ServiceAddress}{_options.UrlDelimiter}device_id{_options.UrlDelimiter}db{_options.UrlDelimiter}{_options.DbId}{_options.UrlDelimiter}device_id{_options.UrlDelimiter}{_options.DeviceId}";
 
             var rawResult = await _webRequester.Request(url, LogServiceWebRequestMethodTypes.PUT, _deviceInfoEntity, _jsonSettings, cancellation);
             ParseResult(url, rawResult, out var result, out var json);
@@ -54,7 +54,7 @@ namespace LogServiceClient.Runtime.WebRequests {
         }
 
         public async UniTask<LogServiceGetSessionResult> GetSession(CancellationToken cancellation) {
-            string url = $"{_options.ServiceAddress}/session_id/db/{_options.DbId}/device_id/{_options.DeviceId}";
+            string url = $"{_options.ServiceAddress}{_options.UrlDelimiter}session_id{_options.UrlDelimiter}db{_options.UrlDelimiter}{_options.DbId}{_options.UrlDelimiter}device_id{_options.UrlDelimiter}{_options.DeviceId}";
 
             var rawResult = await _webRequester.Request(url, LogServiceWebRequestMethodTypes.GET, null, null, cancellation);
             ParseResult(url, rawResult, out var result, out var json);
@@ -72,7 +72,7 @@ namespace LogServiceClient.Runtime.WebRequests {
                 ExceptionsHelper.ThrowArgumentException();
             }
 
-            string url = $"{_options.ServiceAddress}/report_info/db/{_options.DbId}/session_id/{sessionId}";
+            string url = $"{_options.ServiceAddress}{_options.UrlDelimiter}report_info{_options.UrlDelimiter}db{_options.UrlDelimiter}{_options.DbId}{_options.UrlDelimiter}session_id{_options.UrlDelimiter}{sessionId}";
 
             _jsonMapBuffer.Clear();
             _jsonMapBuffer["userSettings"] = _userSettingsProvider.Get();
@@ -102,7 +102,7 @@ namespace LogServiceClient.Runtime.WebRequests {
             _jsonMapBuffer.Clear();
             _jsonMapBuffer["entities"] = entities;
 
-            string url = $"{_options.ServiceAddress}/events/db/{_options.DbId}/report_id/{reportId}";
+            string url = $"{_options.ServiceAddress}{_options.UrlDelimiter}events{_options.UrlDelimiter}db{_options.UrlDelimiter}{_options.DbId}{_options.UrlDelimiter}report_id{_options.UrlDelimiter}{reportId}";
 
             var rawResult = await _webRequester.Request(url, LogServiceWebRequestMethodTypes.POST, _jsonMapBuffer, _jsonSettings, cancellation);
             ParseResult(url, rawResult, out var result, out var json);

@@ -32,6 +32,10 @@ namespace LogServiceClient.Runtime {
         /// </summary>
         public LogServiceClientDeviceOptions DeviceOptions { get; set; }
 
+        /// <summary>
+        /// Разделитель пути url.
+        /// </summary>
+        public string UrlDelimiter = "/";
 
         /// <summary>
         /// Объект, возвращающий идентификатор лога.
