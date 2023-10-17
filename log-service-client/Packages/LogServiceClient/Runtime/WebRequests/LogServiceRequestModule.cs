@@ -3,22 +3,22 @@ using LogServiceClient.Runtime.Constants;
 using LogServiceClient.Runtime.Exceptions;
 using LogServiceClient.Runtime.External.Interfaces;
 using LogServiceClient.Runtime.Mappers.Interfaces;
+using LogServiceClient.Runtime.WebRequests.Constants;
 using LogServiceClient.Runtime.WebRequests.Interfaces;
 using LogServiceClient.Runtime.WebRequests.Utils;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
-using System;
 using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
-using UnityEngine.Networking;
 
 namespace LogServiceClient.Runtime.WebRequests {
-    public sealed class LogServiceRequester : ILogServiceRequester {
+    public sealed class LogServiceRequestModule : ILogServiceRequestModule {
         private readonly LogServiceClientOptions _options;
         private readonly ILogMapper<LogServiceClientDeviceOptions, LogDeviceInfoEntity> _mapper;
         private readonly IUserSettingsProvider _userSettingsProvider;
+        private readonly ILogServiceWebRequester _webRequester;
 
         private readonly JsonSerializerSettings _jsonSettings = new JsonSerializerSettings {
             DateFormatHandling = DateFormatHandling.IsoDateFormat,
@@ -30,13 +30,15 @@ namespace LogServiceClient.Runtime.WebRequests {
 
         private LogDeviceInfoEntity _deviceInfoEntity;
 
-        public LogServiceRequester(
+        public LogServiceRequestModule(
             LogServiceClientOptions options, 
-            ILogMapper<LogServiceClientDeviceOptions, LogDeviceInfoEntity> mapper) {
+            ILogMapper<LogServiceClientDeviceOptions, LogDeviceInfoEntity> mapper,
+            ILogServiceWebRequester webRequester) {
 
             _options = options;
             _mapper = mapper;
             _userSettingsProvider = options.UserSettingsProvider;
+            _webRequester = webRequester;
         }
 
         public async UniTask<LogServiceRequestResult> PutDevice(CancellationToken cancellation) {
@@ -44,19 +46,18 @@ namespace LogServiceClient.Runtime.WebRequests {
             _mapper.Copy(_options.DeviceOptions, _deviceInfoEntity);
 
             string url = $"{_options.ServiceAddress}/device_id/db/{_options.DbId}/device_id/{_options.DeviceId}";
-            string dataJson = JsonConvert.SerializeObject(_deviceInfoEntity, _jsonSettings);
-            UnityWebRequest www = CreatePutRequest(url, dataJson);
 
-            var (result, _) = await PerformRequest(www, cancellation);
+            var rawResult = await _webRequester.Request(url, LogServiceWebRequestMethodTypes.PUT, _deviceInfoEntity, _jsonSettings, cancellation);
+            ParseResult(url, rawResult, out var result, out var json);
 
             return result;
         }
 
         public async UniTask<LogServiceGetSessionResult> GetSession(CancellationToken cancellation) {
             string url = $"{_options.ServiceAddress}/session_id/db/{_options.DbId}/device_id/{_options.DeviceId}";
-            UnityWebRequest www = CreateGetRequest(url);
 
-            var (result, json) = await PerformRequest(www, cancellation);
+            var rawResult = await _webRequester.Request(url, LogServiceWebRequestMethodTypes.GET, null, null, cancellation);
+            ParseResult(url, rawResult, out var result, out var json);
 
             string sessionId = json?.Value<string>("sessionId");
 
@@ -75,11 +76,9 @@ namespace LogServiceClient.Runtime.WebRequests {
 
             _jsonMapBuffer.Clear();
             _jsonMapBuffer["userSettings"] = _userSettingsProvider.Get();
-            string dataJson = JsonConvert.SerializeObject(_jsonMapBuffer, _jsonSettings);
-            
-            UnityWebRequest www = CreatePostRequest(url, dataJson);
 
-            var (result, json) = await PerformRequest(www, cancellation);
+            var rawResult = await _webRequester.Request(url, LogServiceWebRequestMethodTypes.POST, _jsonMapBuffer, _jsonSettings, cancellation);
+            ParseResult(url, rawResult, out var result, out var json);
 
             string reportId = json?.Value<string>("reportId");
 
@@ -102,72 +101,27 @@ namespace LogServiceClient.Runtime.WebRequests {
             
             _jsonMapBuffer.Clear();
             _jsonMapBuffer["entities"] = entities;
-            string dataJson = JsonConvert.SerializeObject(_jsonMapBuffer, _jsonSettings);
-            
-            UnityWebRequest www = CreatePostRequest($"{_options.ServiceAddress}/events/db/{_options.DbId}/report_id/{reportId}", dataJson);
 
-            var (result, _) = await PerformRequest(www, cancellation);
+            string url = $"{_options.ServiceAddress}/events/db/{_options.DbId}/report_id/{reportId}";
+
+            var rawResult = await _webRequester.Request(url, LogServiceWebRequestMethodTypes.POST, _jsonMapBuffer, _jsonSettings, cancellation);
+            ParseResult(url, rawResult, out var result, out var json);
 
             return result;
         }
 
-        private async UniTask<(LogServiceRequestResult Result, JObject Json)> PerformRequest(UnityWebRequest www, CancellationToken cancellation) {
-            try {
-                await www.SendWebRequest().ToUniTask(cancellationToken: cancellation);
-            } catch (Exception) { }
+        private void ParseResult(string method, LogServiceWebRequestResult srcResult, out LogServiceRequestResult result, out JObject json) {
+            TryParseData(srcResult.ResultData, out json);
 
-            string resultStringData = www.downloadHandler.text;
-            bool succeed = www.result == UnityWebRequest.Result.Success || www.result == UnityWebRequest.Result.ProtocolError;
-
-            TryParseData(resultStringData, out var json);
             var errorCode = (LogServiceInternalResultCodes?)json?.Value<int>("errorCode");
 
             if (_options.DebugMode) {
-                UnityEngine.Debug.Log($"[LogServiceRequester - Response]: ({www.uri}) {www.result}, {resultStringData}");
+                Debug.Log($"[LogServiceRequester - Response]: ({method}) {srcResult.Succeed}, {srcResult.ResultData}");
             }
 
-            var result = succeed
-                ? LogServiceRequestResult.Successful(www.responseCode, errorCode)
+            result = srcResult.Succeed
+                ? LogServiceRequestResult.Successful(srcResult.HttpCode, errorCode)
                 : LogServiceRequestResult.Failed();
-
-            return (result, json);
-        }
-
-        private UnityWebRequest CreateGetRequest(string url) {
-            if (_options.DebugMode) {
-                Debug.Log($"[LogServiceRequester - Request]: ({url}) '' ");
-            }
-            
-            UnityWebRequest www = UnityWebRequest.Get(url);
-            www.certificateHandler = new IgnoreCertificateHandler();
-            return www;
-        }
-
-        private UnityWebRequest CreatePostRequest(string url, string dataJson) {
-            if (_options.DebugMode) {
-                Debug.Log($"[LogServiceRequester - Request]: ({url}) '{dataJson}' ");
-            }
-            
-            UnityWebRequest www = UnityWebRequest.Put(url, dataJson);
-
-            www.method = UnityWebRequest.kHttpVerbPOST;
-            www.SetRequestHeader("Content-Type", "application/json");
-            www.certificateHandler = new IgnoreCertificateHandler();
-
-            return www;
-        }
-
-        private UnityWebRequest CreatePutRequest(string url, string dataJson) {
-            if (_options.DebugMode) {
-                Debug.Log($"[LogServiceRequester - Request]: ({url}) '{dataJson}' ");
-            }
-            
-            UnityWebRequest www = UnityWebRequest.Put(url, dataJson);
-
-            www.SetRequestHeader("Content-Type", "application/json");
-            www.certificateHandler = new IgnoreCertificateHandler();
-
-            return www;
         }
 
         private static bool TryParseData(string data, out JObject json) {

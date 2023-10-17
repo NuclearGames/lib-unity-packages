@@ -15,7 +15,7 @@ using System.Threading;
 namespace LogServiceClient.Runtime {
     public sealed class LogServiceClientCore : IDisposable {
         private readonly LogServiceClientOptions _options;
-        private readonly LogServiceRequester _requester;
+        private readonly LogServiceRequestModule _requester;
 
         private readonly LogPool<ReceiveLogEntry> _receivePool;
         private readonly LogPool<SendLogEntry> _sendPool;
@@ -51,7 +51,10 @@ namespace LogServiceClient.Runtime {
             _sendPool = new LogPool<SendLogEntry>(_options.SendBufferPoolStartCapacity, _options.SendBufferPoolMaxCapacity);
             _logEventEntityPool = new LogPool<LogEventEntity>(_options.EventEntityPoolCapacity, _options.EventEntityPoolCapacity);
 
-            _requester = new LogServiceRequester(_options, _logServiceClientDeviceOptionsToLogDeviceInfoEntityMapper);
+            var requester = _options.WebRequester != null
+                ? _options.WebRequester
+                : new LogServiceDefaultWebRequester();
+            _requester = new LogServiceRequestModule(_options, _logServiceClientDeviceOptionsToLogDeviceInfoEntityMapper, requester);
 
             _receiveBuffer = new ReceiveLogBuffer(_receivePool, _options.ReceiveBufferCapacity);
             _sendBuffer = new SendLogBuffer(_sendPool, _options.SendBufferCapacity);

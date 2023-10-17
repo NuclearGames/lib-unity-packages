@@ -2,6 +2,7 @@
 using LogServiceClient.Runtime.Caches.Interfaces;
 using LogServiceClient.Runtime.Enums;
 using LogServiceClient.Runtime.External.Interfaces;
+using LogServiceClient.Runtime.WebRequests.Interfaces;
 
 namespace LogServiceClient.Runtime {
     public sealed class LogServiceClientOptions {
@@ -44,6 +45,12 @@ namespace LogServiceClient.Runtime {
         /// </para>
         /// </summary>
         public ILogIdProvider LogIdProvider { get; set; }
+
+        /// <summary>
+        /// Объект выполняющий запросы.
+        /// <para>По умолчанию: null - используется дефолтный.</para>
+        /// </summary>
+        public ILogServiceWebRequester WebRequester { get; set; } = null;
 
         /// <summary>
         /// Объект, предоставляющий инфу о настройках.

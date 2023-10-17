@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Threading;
 
 namespace LogServiceClient.Runtime.WebRequests.Interfaces {
-    public interface ILogServiceRequester {
+    public interface ILogServiceRequestModule {
         UniTask<LogServiceGetSessionResult> GetSession(CancellationToken cancellation);
         UniTask<LogServicePostReportResult> PostReport(string sessionId, CancellationToken cancellation);
         UniTask<LogServiceRequestResult> PostEvents(string reportId, List<LogEventEntity> entities, CancellationToken cancellation);
