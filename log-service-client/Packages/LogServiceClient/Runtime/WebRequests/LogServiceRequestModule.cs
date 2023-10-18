@@ -125,13 +125,15 @@ namespace LogServiceClient.Runtime.WebRequests {
         }
 
         private static bool TryParseData(string data, out JObject json) {
-            try {
-                json = JObject.Parse(data);
-                return true;
-            } catch (JsonReaderException) {
-                json = null;
-                return false;
+            if (!string.IsNullOrWhiteSpace(data)) {
+                try {
+                    json = JObject.Parse(data);
+                    return true;
+                } catch (JsonReaderException) { }
             }
+
+            json = null;
+            return false;
         }
     }
 }
