@@ -11,7 +11,7 @@ namespace Sandbox {
             _client = new LogServiceClientCore(new LogServiceClientOptions() { 
                 ValidationOptions = new LogServiceClientValidationOptions(),
 
-                ServiceAddress = "https://warplane-inc-online.logservice.game-logs.online",
+                ServiceAddress = "https://warplane-inc-online.logservice.game-logs.online/log",
                 DbId = "warplane_inc_online",
 
                 DeviceId = SystemInfo.deviceUniqueIdentifier,
